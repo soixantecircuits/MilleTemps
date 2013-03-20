@@ -78,13 +78,19 @@ void testApp::setup(){
   }
   bFirst = false;
   bLast = false;
-  movers.resize(20);
+  movers.resize(18);
   for (unsigned int i = 0; i < movers.size(); i++){
     movers[i].setup();
     movers[i].setMass(ofRandom(0.1, 4));
     //movers[i].setMass(0.1);
     movers[i].setLocation(ofRandomWidth(), 0);
   }
+  ofFloatColor c;
+  c.set(0);
+  c +=  150/255.;
+  cout << "c: " << c.getBrightness()*255 << endl;
+  c +=  150/255.;
+  cout << "c: " << c.getBrightness()*255 << endl;
 }
 
 
@@ -116,9 +122,18 @@ void testApp::updateSpotFromMovers(){
     spots[i].color.set(0);
   }
   for (int i = 0; i < (int) movers.size(); i++){
-    int where = floor(movers[i].getLocation().x/interval);
-    where = ofClamp(where, 0, spots.size()-1);
-    spots[where].color +=150;
+    float diameter = movers[i].getDiameter();
+    float radius = diameter/2.;
+    int start = floor((movers[i].getLocation().x-radius)/interval);
+    int end = ceil((movers[i].getLocation().x+radius)/interval);
+    start = ofClamp(start, 0, spots.size()-1);
+    end = ofClamp(end, 0, spots.size()-1);
+    ofRectangle ball(movers[i].getLocation().x-radius, movers[i].getLocation().y-radius, diameter, diameter);
+    for (int j = start; j < end; j++){
+      ofRectangle intervalRect(j*interval, 0, interval, ofGetHeight());
+      ofRectangle intersect = intervalRect.getIntersection(ball);
+      spots[j].color +=1/movers[i].getMass()*intersect.getArea()/400.;
+    }
   }
 }
 
@@ -148,7 +163,7 @@ void testApp::update(){
   updateMoving();
   updateMovers();
   updateSpotFromMovers();
-
+  
   blends[0]->begin();
   ofSetColor(spots[0].color);
   targets[0].draw(0,0);
@@ -185,6 +200,7 @@ void testApp::draw(){
       movers[i].draw();
     }
   }
+  ofSetColor(255);
   blends[blends.size()-1]->draw(0,ofGetHeight()-100);
 }
 

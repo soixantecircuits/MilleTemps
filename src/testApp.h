@@ -8,7 +8,7 @@ class ledProjector{
  public:
   int dmxChannel;
   ofVec2f pos;
-  ofColor color;
+  ofFloatColor color;
 };
 
 class testApp : public ofBaseApp{

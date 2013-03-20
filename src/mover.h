@@ -10,6 +10,7 @@ class mover {
       velocity.set(0, 0);
       acceleration.set(0, 0);
       mass = 1;
+      density = 1/16.;
     }
 
 		void applyForce(const ofVec2f & force){
@@ -25,7 +26,7 @@ class mover {
 
 		void draw(){
       ofSetColor(175);
-      ofEllipse(location, mass * 16, mass * 16);
+      ofEllipse(location, mass / density, mass /density);
     }
 
     void setMass(float m){
@@ -38,6 +39,8 @@ class mover {
 
     const ofVec2f& getVelocity() const{ return velocity;}
     const ofVec2f& getLocation() const{ return location;}
+    float getMass() const{ return mass;}
+    float getDiameter() const{ return mass/density;}
 
     void checkEdges(){
 
@@ -66,4 +69,5 @@ class mover {
     ofVec2f velocity;
     ofVec2f acceleration;
     float mass;
+    float density;
 };
