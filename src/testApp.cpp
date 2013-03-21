@@ -78,19 +78,14 @@ void testApp::setup(){
   }
   bFirst = false;
   bLast = false;
-  movers.resize(18);
+  movers.resize(1);
   for (unsigned int i = 0; i < movers.size(); i++){
     movers[i].setup();
     movers[i].setMass(ofRandom(0.1, 4));
     //movers[i].setMass(0.1);
     movers[i].setLocation(ofRandomWidth(), 0);
   }
-  ofFloatColor c;
-  c.set(0);
-  c +=  150/255.;
-  cout << "c: " << c.getBrightness()*255 << endl;
-  c +=  150/255.;
-  cout << "c: " << c.getBrightness()*255 << endl;
+  yoff = ofRandom(0, 1000);
 }
 
 
@@ -118,9 +113,9 @@ void testApp::updateMovers(){
 //--------------------------------------------------------------
 void testApp::updateSpotFromMovers(){
   float interval = ofGetWidth()/nbLedProjector;
-  for (int i = 0; i < (int) spots.size(); i++){
-    spots[i].color.set(0);
-  }
+  //for (int i = 0; i < (int) spots.size(); i++){
+  //  spots[i].color.set(0);
+  //}
   for (int i = 0; i < (int) movers.size(); i++){
     float diameter = movers[i].getDiameter();
     float radius = diameter/2.;
@@ -159,8 +154,20 @@ void testApp::updateMoving(){
 }
 
 //--------------------------------------------------------------
+void testApp::updatePerlinNoise(){
+  yoff += 0.005;
+  float xoff = 0;
+  for (int i = 0; i < nbLedProjector; i++){
+    xoff += 0.3;
+    float value = ofNoise(xoff, yoff);
+    spots[i].color.set(value);
+  }
+}
+
+//--------------------------------------------------------------
 void testApp::update(){
-  updateMoving();
+  //updateMoving();
+  updatePerlinNoise();
   updateMovers();
   updateSpotFromMovers();
   
@@ -243,6 +250,7 @@ void testApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
+  yoff = ofRandom(0, 1000);
 }
 
 //--------------------------------------------------------------

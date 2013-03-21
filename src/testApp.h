@@ -30,6 +30,7 @@ public:
     void updateMoving();
     void updateMovers();
     void updateSpotFromMovers();
+    void updatePerlinNoise();
     vector<ofImage> targets;
     vector<ofxBlend*> blends;
     ofImage base;
@@ -42,4 +43,5 @@ public:
     bool bLast;
     vector<mover> movers;
     bool bDrawMovers;
+    float yoff;
 };
