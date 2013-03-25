@@ -2,7 +2,9 @@
 
 #include "ofMain.h"
 #include "ofxFX.h"
+#include "ofxUI.h"
 #include "mover.h"
+#include "LightenDisplay.h"
 
 class ledProjector{
  public:
@@ -26,17 +28,17 @@ public:
     void windowResized(int w, int h);
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
+    void exit();
     
     void updateMoving();
     void updateMovers();
     void updateSpotFromMovers();
     void updatePerlinNoise();
-    vector<ofImage> targets;
-    vector<ofxBlend*> blends;
-    ofImage base;
     int spot;
     int nbLedProjector;
-    vector<ledProjector> spots;
+    //vector<ledProjector> spots;
+    vector<ofFloatColor> spots;
+    LightenDisplay display;
     int testFade;
     vector<int> gaussienne;
     bool bFirst;
@@ -44,4 +46,9 @@ public:
     vector<mover> movers;
     bool bDrawMovers;
     float yoff;
+    float yoff_inc;
+    float xoff_inc;
+    ofxUICanvas *gui;   	
+    void guiEvent(ofxUIEventArgs &e);
+    ofColor bgColor;
 };
