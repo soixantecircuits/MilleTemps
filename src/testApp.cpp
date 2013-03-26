@@ -31,7 +31,7 @@ void testApp::setup(){
   }
   bFirst = false;
   bLast = false;
-  movers.resize(1);
+  movers.resize(0);
   for (unsigned int i = 0; i < movers.size(); i++){
     movers[i].setup();
     movers[i].setMass(ofRandom(0.1, 4));
@@ -55,6 +55,8 @@ void testApp::setup(){
     gui->addWidgetDown(new ofxUILabel("TOURBILLONS", OFX_UI_FONT_MEDIUM));     
     gui->addSlider("vitesse", 0.001, 0.020, &yoff_inc, 95, dim);
     gui->addSlider("largeur", 0.3, 0.01, &xoff_inc, 95, dim);
+    gui->addWidgetDown(new ofxUILabel("VENT", OFX_UI_FONT_MEDIUM));     
+    gui->addWidgetDown(new ofxUIRotaryCircleSlider("R2SLIDERCIRCLEROTARY", ofPoint(0,100), ofPoint(0,100), &wind, dim*8));
     /*
     gui->setWidgetPosition(OFX_UI_WIDGET_POSITION_RIGHT);
     gui->addSlider("BGG", 0, 255, backgroundColor.g, 95, dim);

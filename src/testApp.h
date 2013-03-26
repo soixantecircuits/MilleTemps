@@ -51,4 +51,5 @@ public:
     ofxUICanvas *gui;   	
     void guiEvent(ofxUIEventArgs &e);
     ofColor bgColor;
+    ofPoint wind;
 };
