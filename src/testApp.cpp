@@ -1,4 +1,9 @@
 #include "testApp.h"
+float gaussian(float x, float mean, float variance) {  
+  float dx = x - mean;  
+  //return (1.f / sqrtf(TWO_PI * variance)) * expf(-(dx * dx) / (2 * variance));  
+  return expf(-(dx * dx) / (2 * variance));  
+}  
 
 //--------------------------------------------------------------
 void testApp::setup(){
@@ -31,12 +36,12 @@ void testApp::setup(){
   }
   bFirst = false;
   bLast = false;
-  movers.resize(0);
+  movers.resize(12);
   for (unsigned int i = 0; i < movers.size(); i++){
     movers[i].setup();
-    movers[i].setMass(ofRandom(0.1, 4));
-    //movers[i].setMass(0.1);
-    movers[i].setLocation(ofRandomWidth(), 0);
+    movers[i].setMass(ofRandom(0.5, 2));
+    //movers[i].setMass(1);
+    movers[i].setLocation(ofRandom(-1,2)*ofGetWidth(), 0);
   }
   yoff = ofRandom(0, 1000);
   yoff_inc = 0.005;
@@ -55,8 +60,15 @@ void testApp::setup(){
     gui->addWidgetDown(new ofxUILabel("TOURBILLONS", OFX_UI_FONT_MEDIUM));     
     gui->addSlider("vitesse", 0.001, 0.020, &yoff_inc, 95, dim);
     gui->addSlider("largeur", 0.3, 0.01, &xoff_inc, 95, dim);
+    gui->addSlider("intensite", 0, 100, &tourbillons_intensite, 95, dim);
+    gui->addSpacer(length, 2); 
+    gui->addWidgetDown(new ofxUILabel("NUAGES", OFX_UI_FONT_MEDIUM));     
+    gui->addSlider("largeur_", 0.1, 20, &sd, 95, dim);
+    gui->addSlider("intensite_", 0, 100, &gaussian_intensite, 95, dim);
+    gui->addSpacer(length, 2); 
     gui->addWidgetDown(new ofxUILabel("VENT", OFX_UI_FONT_MEDIUM));     
-    gui->addWidgetDown(new ofxUIRotaryCircleSlider("R2SLIDERCIRCLEROTARY", ofPoint(0,100), ofPoint(0,100), &wind, dim*8));
+    gui->addWidgetDown(new ofxUIRotaryCircleSlider("R2SLIDERCIRCLEROTARY", ofPoint(0,60), ofPoint(0,360), &wind, dim*8));
+    gui->addSlider("vitesse (en km/h)", 0, 200, &wind_speed, 200, dim);
     /*
     gui->setWidgetPosition(OFX_UI_WIDGET_POSITION_RIGHT);
     gui->addSlider("BGG", 0, 255, backgroundColor.g, 95, dim);
@@ -78,11 +90,26 @@ void testApp::guiEvent(ofxUIEventArgs &e)
 		ofxUISlider *slider = (ofxUISlider *) e.widget; 
 		display.setBaseColor(ofColor(slider->getScaledValue())); 
   }
+  else if(name == "R2SLIDERCIRCLEROTARY")
+	{
+		ofxUIRotaryCircleSlider *rotaryslider = (ofxUIRotaryCircleSlider *) e.widget; 
+    ofxUISlider *slider = (ofxUISlider *) gui->getWidget("vitesse (en km/h)");
+    slider->setValue(rotaryslider->getScaledValue().x);
+  }
+  else if(name == "vitesse (en km/h)")
+	{
+		ofxUISlider *slider = (ofxUISlider *) e.widget; 
+    ofxUIRotaryCircleSlider* rotaryslider = (ofxUIRotaryCircleSlider *) gui->getWidget("R2SLIDERCIRCLEROTARY");
+    rotaryslider->setValue(ofPoint(slider->getScaledValue(), rotaryslider->getScaledValue().y));
+  }
 }
 
 //--------------------------------------------------------------
 void testApp::updateMovers(){
-  ofVec2f wind(ofMap(mouseX, ofGetWidth()/2, ofGetWidth(), 0, 0.01), 0);
+  //ofVec2f wind(ofMap(mouseX, ofGetWidth()/2, ofGetWidth(), 0, 0.01), 0);
+  ofVec2f windCartesian(-sin(ofDegToRad(wind.y)), cos(ofDegToRad(wind.y)));
+  float coef = 0.0001;
+  ofVec2f windForce(coef * wind_speed * wind_speed * windCartesian);  
   ofVec2f gravity(0, 0.1);
   for (unsigned int i = 0; i < movers.size(); i++){
     //friction
@@ -93,9 +120,9 @@ void testApp::updateMovers(){
     friction *= c;
 
 
-    movers[i].applyForce(friction);
-    movers[i].applyForce(wind);
-    movers[i].applyForce(gravity);
+    //movers[i].applyForce(friction);
+    movers[i].applyForce(windForce);
+    //movers[i].applyForce(gravity);
     movers[i].update();
     movers[i].checkEdges();
   }
@@ -119,6 +146,20 @@ void testApp::updateSpotFromMovers(){
       ofRectangle intervalRect(j*interval, 0, interval, ofGetHeight());
       ofRectangle intersect = intervalRect.getIntersection(ball);
       spots[j]+=1/movers[i].getMass()*intersect.getArea()/400.;
+    }
+  }
+}
+
+//--------------------------------------------------------------
+void testApp::updateSpotFromMoversGaussian(){
+  float interval = ofGetWidth()/nbLedProjector;
+  for (int i = 0; i < (int) movers.size(); i++){
+    float diameter = movers[i].getDiameter();
+    float radius = diameter/2.;
+    float where = (movers[i].getLocation().x-radius)/interval;
+     for (int i = 0; i < nbLedProjector; i++){
+      float value = gaussian(i, where, sd)*gaussian_intensite/100;
+      spots[i]+=value;
     }
   }
 }
@@ -150,7 +191,7 @@ void testApp::updatePerlinNoise(){
   float xoff = 0;
   for (int i = 0; i < nbLedProjector; i++){
     xoff += xoff_inc;
-    float value = ofNoise(xoff, yoff);
+    float value = ofNoise(xoff, yoff)*tourbillons_intensite/100;
     spots[i].set(value);
   }
 }
@@ -160,7 +201,7 @@ void testApp::update(){
   //updateMoving();
   updatePerlinNoise();
   updateMovers();
-  updateSpotFromMovers();
+  updateSpotFromMoversGaussian();
 
   for (int i = 0; i < nbLedProjector; i++){
     //spots[i].set(1);

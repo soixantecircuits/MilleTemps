@@ -33,6 +33,7 @@ public:
     void updateMoving();
     void updateMovers();
     void updateSpotFromMovers();
+    void updateSpotFromMoversGaussian();
     void updatePerlinNoise();
     int spot;
     int nbLedProjector;
@@ -48,8 +49,12 @@ public:
     float yoff;
     float yoff_inc;
     float xoff_inc;
+    float tourbillons_intensite;
     ofxUICanvas *gui;   	
     void guiEvent(ofxUIEventArgs &e);
     ofColor bgColor;
     ofPoint wind;
+    float sd;
+    float gaussian_intensite;
+    float wind_speed;
 };

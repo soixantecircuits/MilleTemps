@@ -44,19 +44,23 @@ class mover {
 
     void checkEdges(){
 
-      if (location.x > ofGetWidth()){
+      if (location.x > ofGetWidth()*2){
         //velocity.x *= -1;
         //location.x = ofGetWidth();
-        location.x = 0;
-      } else if (location.x < 0){
+        location.x = -ofGetWidth();
+        velocity *= 0;
+        //mass = ofRandom(0.1, 1);
+      } else if (location.x < -ofGetWidth()){
         //velocity.x *= -1;
         //location.x = 0;
-        location.x = ofGetWidth();
+        location.x = ofGetWidth()*2;
+        velocity *= 0;
+        //mass = ofRandom(0.1, 4);
       }
       
-      if (location.y > ofGetHeight() - 100){
+      if (location.y > ofGetHeight()){
         velocity.y *= -1;
-        location.y = ofGetHeight() - 100;
+        location.y = ofGetHeight();
       } else if (location.y < 0){
         velocity.y *= -1;
         location.y = 0;
