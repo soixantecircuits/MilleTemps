@@ -58,3 +58,8 @@ void LightenDisplay::draw(int x, int y){
   blends[blends.size()-1]->draw(x, y);
 }
 
+//--------------------------------------------------------------
+ofTexture LightenDisplay::getTextureReference(){
+  return blends[blends.size()-1]->getTextureReference();
+}
+

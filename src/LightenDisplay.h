@@ -9,6 +9,7 @@ public:
     void update(vector<ofFloatColor> & colors);
     void draw(int x = 0, int y = 0);
     void setBaseColor(ofColor color){baseColor.set(color);};
+    ofTexture getTextureReference();
 
     vector<ofImage> targets;
     vector<ofxBlend*> blends;

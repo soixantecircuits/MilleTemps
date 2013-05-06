@@ -36,10 +36,11 @@ void testApp::setup(){
   }
   bFirst = false;
   bLast = false;
-  movers.resize(12);
+  movers.resize(32);
   for (unsigned int i = 0; i < movers.size(); i++){
     movers[i].setup();
-    movers[i].setMass(ofRandom(0.5, 2));
+    //movers[i].setMass(ofRandom(0.5, 2));
+    movers[i].setMass(ofRandom(0.1, 4));
     //movers[i].setMass(1);
     movers[i].setLocation(ofRandom(-1,2)*ofGetWidth(), 0);
   }
@@ -76,7 +77,25 @@ void testApp::setup(){
     */
   ofAddListener(gui->newGUIEvent,this,&testApp::guiEvent);	
   gui->loadSettings("GUI/guiSettings.xml"); 
- 
+
+  // record
+  sampleRate = 44100;
+  channels = 2;
+
+  ofSetFrameRate(60);
+  ofSetLogLevel(OF_LOG_VERBOSE);
+  fileName = "testMovie";
+  fileExt = ".mov"; // ffmpeg uses the extension to determine the container type. run 'ffmpeg -formats' to see supported formats
+
+  // override the default codecs if you like
+  // run 'ffmpeg -codecs' to find out what your implementation supports (or -formats on some older versions)
+  vidRecorder.setVideoCodec("mpeg4"); 
+  vidRecorder.setVideoBitrate("800k");
+  //vidRecorder.setAudioCodec("mp3");
+  //vidRecorder.setAudioBitrate("192k");
+
+  bRecording = false;
+  
 }
 
 //--------------------------------------------------------------
@@ -108,7 +127,7 @@ void testApp::guiEvent(ofxUIEventArgs &e)
 void testApp::updateMovers(){
   //ofVec2f wind(ofMap(mouseX, ofGetWidth()/2, ofGetWidth(), 0, 0.01), 0);
   ofVec2f windCartesian(-sin(ofDegToRad(wind.y)), cos(ofDegToRad(wind.y)));
-  float coef = 0.0001;
+  float coef = 0.0001/6./10.;
   ofVec2f windForce(coef * wind_speed * wind_speed * windCartesian);  
   ofVec2f gravity(0, 0.1);
   for (unsigned int i = 0; i < movers.size(); i++){
@@ -210,11 +229,16 @@ void testApp::update(){
   ofSetColor(bgColor);
   display.update(spots);
   
+  if(bRecording){
+    ofPixels pixels;
+    display.getTextureReference().readToPixels(pixels);
+    vidRecorder.addFrame(pixels);
+  }
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
-  ofBackgroundGradient(ofColor::gray, ofColor::black);
+  //ofBackgroundGradient(ofColor::gray, ofColor::black);
   ofSetColor(255);
   ofSetColor(bgColor);
   display.draw(0, 400);
@@ -223,6 +247,10 @@ void testApp::draw(){
     for (unsigned int i = 0; i < movers.size(); i++){
       movers[i].draw();
     }
+  }
+  if(bRecording){
+    ofSetColor(255, 0, 0);
+    ofCircle(ofGetWidth() - 20, 20, 5);
   }
 }
 
@@ -244,6 +272,19 @@ void testApp::keyPressed(int key){
       break; 
     default:
       break;
+  }
+  if(key=='r'){
+    bRecording = !bRecording;
+    if(bRecording && !vidRecorder.isInitialized()) {
+      vidRecorder.setup(fileName+ofGetTimestampString()+fileExt, ofGetWidth(), ofGetHeight(), 30, sampleRate, channels);
+      //          vidRecorder.setup(fileName+ofGetTimestampString()+fileExt, vidGrabber.getWidth(), vidGrabber.getHeight(), 30); // no audio
+      //            vidRecorder.setup(fileName+ofGetTimestampString()+fileExt, 0,0,0, sampleRate, channels); // no video
+      //          vidRecorder.setupCustomOutput(vidGrabber.getWidth(), vidGrabber.getHeight(), 30, sampleRate, channels, "-vcodec mpeg4 -b 1600k -acodec mp2 -ab 128k -f mpegts udp://localhost:1234"); // for custom ffmpeg output string (streaming, etc)
+    }
+  }
+  if(key=='c'){
+    bRecording = false;
+    vidRecorder.close();
   }
 
 }
@@ -292,4 +333,5 @@ void testApp::exit()
 {
     gui->saveSettings("GUI/guiSettings.xml");
     delete gui; 
+    vidRecorder.close();
 }

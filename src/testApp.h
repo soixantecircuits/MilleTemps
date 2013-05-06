@@ -5,6 +5,7 @@
 #include "ofxUI.h"
 #include "mover.h"
 #include "LightenDisplay.h"
+#include "ofxVideoRecorder.h"
 
 class ledProjector{
  public:
@@ -57,4 +58,17 @@ public:
     float sd;
     float gaussian_intensite;
     float wind_speed;
+
+    //record
+    ofxVideoRecorder    vidRecorder;
+    ofSoundStream       soundStream;
+    bool bRecording;
+    int sampleRate;
+    int channels;
+    string fileName;
+    string fileExt;
+    
+    ofFbo recordFbo;
+    ofPixels recordPixels;
+
 };

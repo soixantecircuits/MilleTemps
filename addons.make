@@ -1,3 +1,4 @@
 ofxFX
 ofxUI
 ofxXmlSettings
+ofxVideoRecorder
