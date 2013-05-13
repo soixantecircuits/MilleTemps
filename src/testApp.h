@@ -5,7 +5,6 @@
 #include "ofxUI.h"
 #include "mover.h"
 #include "LightenDisplay.h"
-#include "ofxVideoRecorder.h"
 
 class ledProjector{
  public:
