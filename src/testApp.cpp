@@ -17,6 +17,8 @@ void testApp::setup(){
   display.setup("imgs/realistes_cropped", nbLedProjector);
   //ofSetWindowShape(base.getWidth(), base.getHeight());
   //ofSetWindowShape(800, 600);
+  int width = 1327;
+  int height = 747;
   ofSetWindowShape(1327, 747);
   ofSetWindowTitle(ofToString(ofGetFrameRate()));
 
@@ -42,7 +44,7 @@ void testApp::setup(){
     //movers[i].setMass(ofRandom(0.5, 2));
     movers[i].setMass(ofRandom(0.1, 4));
     //movers[i].setMass(1);
-    movers[i].setLocation(ofRandom(-1,2)*ofGetWidth(), 0);
+    movers[i].setLocation(ofRandom(-1,2)*width, 0);
   }
   yoff = ofRandom(0, 1000);
   yoff_inc = 0.005;
@@ -51,7 +53,7 @@ void testApp::setup(){
 	float xInit = OFX_UI_GLOBAL_WIDGET_SPACING; 
   float length = 320-xInit; 
 	
-  gui = new ofxUICanvas(0,0,length+xInit*2.0,ofGetHeight());     
+  gui = new ofxUICanvas(0,0,length+xInit*2.0,height);     
 	gui->addWidgetDown(new ofxUILabel("MILLE TEMPS", OFX_UI_FONT_LARGE)); 
 
     gui->addSpacer(length, 2); 
@@ -70,6 +72,10 @@ void testApp::setup(){
     gui->addWidgetDown(new ofxUILabel("VENT", OFX_UI_FONT_MEDIUM));     
     gui->addWidgetDown(new ofxUIRotaryCircleSlider("R2SLIDERCIRCLEROTARY", ofPoint(0,60), ofPoint(0,360), &wind, dim*8));
     gui->addSlider("vitesse (en km/h)", 0, 200, &wind_speed, 200, dim);
+    gui->addSpacer(length, 2); 
+    gui->addWidgetDown(new ofxUILabel("TEMPERATURE", OFX_UI_FONT_MEDIUM));     
+    gui->addSlider("temperature", -5, 40, &temperature, 95, dim);
+    gui->addSlider("saturation", 0, 100, &colorSaturation, 95, dim);
     /*
     gui->setWidgetPosition(OFX_UI_WIDGET_POSITION_RIGHT);
     gui->addSlider("BGG", 0, 255, backgroundColor.g, 95, dim);
@@ -78,24 +84,13 @@ void testApp::setup(){
   ofAddListener(gui->newGUIEvent,this,&testApp::guiEvent);	
   gui->loadSettings("GUI/guiSettings.xml"); 
 
-  // record
-  sampleRate = 44100;
-  channels = 2;
+  gui2 = new ofxUICanvas(width- (length+xInit*2.0),0,width, height);     
+	gui2->addWidgetDown(new ofxUILabel("SIMULATION", OFX_UI_FONT_LARGE)); 
 
-  ofSetFrameRate(60);
-  ofSetLogLevel(OF_LOG_VERBOSE);
-  fileName = "testMovie";
-  fileExt = ".mov"; // ffmpeg uses the extension to determine the container type. run 'ffmpeg -formats' to see supported formats
+    gui2->addSpacer(length, 2); 
+    gui2->addSlider("Play X", 1, 100, &simSpeed, 95, dim);
+  gui2->loadSettings("GUI/guiSettings2.xml"); 
 
-  // override the default codecs if you like
-  // run 'ffmpeg -codecs' to find out what your implementation supports (or -formats on some older versions)
-  vidRecorder.setVideoCodec("mpeg4"); 
-  vidRecorder.setVideoBitrate("800k");
-  //vidRecorder.setAudioCodec("mp3");
-  //vidRecorder.setAudioBitrate("192k");
-
-  bRecording = false;
-  
 }
 
 //--------------------------------------------------------------
@@ -217,40 +212,30 @@ void testApp::updatePerlinNoise(){
 
 //--------------------------------------------------------------
 void testApp::update(){
-  //updateMoving();
-  updatePerlinNoise();
-  updateMovers();
-  updateSpotFromMoversGaussian();
-
-  for (int i = 0; i < nbLedProjector; i++){
-    //spots[i].set(1);
+  for (int i = 0; i < simSpeed; i++){
+    updatePerlinNoise();
+    updateMovers();
+    updateSpotFromMoversGaussian();
   }
-  
-  ofSetColor(bgColor);
+
+  float hue = ofMap(temperature, -5, 32, 0, 260/360.);
+  for (int i = 0; i < nbLedProjector; i++){
+    spots[i].setHsb(hue,colorSaturation/100.,spots[i].getBrightness());
+  }
   display.update(spots);
   
-  if(bRecording){
-    ofPixels pixels;
-    display.getTextureReference().readToPixels(pixels);
-    vidRecorder.addFrame(pixels);
-  }
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
   //ofBackgroundGradient(ofColor::gray, ofColor::black);
   ofSetColor(255);
-  ofSetColor(bgColor);
   display.draw(0, 400);
   ofSetColor(255);
   if (bDrawMovers){
     for (unsigned int i = 0; i < movers.size(); i++){
       movers[i].draw();
     }
-  }
-  if(bRecording){
-    ofSetColor(255, 0, 0);
-    ofCircle(ofGetWidth() - 20, 20, 5);
   }
 }
 
@@ -269,24 +254,12 @@ void testApp::keyPressed(int key){
   switch (key){            
     case 'g':
       gui->toggleVisible(); 
+      gui2->toggleVisible(); 
       break; 
     default:
       break;
   }
-  if(key=='r'){
-    bRecording = !bRecording;
-    if(bRecording && !vidRecorder.isInitialized()) {
-      vidRecorder.setup(fileName+ofGetTimestampString()+fileExt, ofGetWidth(), ofGetHeight(), 30, sampleRate, channels);
-      //          vidRecorder.setup(fileName+ofGetTimestampString()+fileExt, vidGrabber.getWidth(), vidGrabber.getHeight(), 30); // no audio
-      //            vidRecorder.setup(fileName+ofGetTimestampString()+fileExt, 0,0,0, sampleRate, channels); // no video
-      //          vidRecorder.setupCustomOutput(vidGrabber.getWidth(), vidGrabber.getHeight(), 30, sampleRate, channels, "-vcodec mpeg4 -b 1600k -acodec mp2 -ab 128k -f mpegts udp://localhost:1234"); // for custom ffmpeg output string (streaming, etc)
-    }
-  }
-  if(key=='c'){
-    bRecording = false;
-    vidRecorder.close();
-  }
-
+ 
 }
 
 //--------------------------------------------------------------
@@ -332,6 +305,7 @@ void testApp::dragEvent(ofDragInfo dragInfo){
 void testApp::exit()
 {
     gui->saveSettings("GUI/guiSettings.xml");
+    gui2->saveSettings("GUI/guiSettings2.xml");
     delete gui; 
-    vidRecorder.close();
+    delete gui2; 
 }

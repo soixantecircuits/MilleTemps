@@ -58,17 +58,9 @@ public:
     float sd;
     float gaussian_intensite;
     float wind_speed;
+    float temperature;
+    float colorSaturation;
 
-    //record
-    ofxVideoRecorder    vidRecorder;
-    ofSoundStream       soundStream;
-    bool bRecording;
-    int sampleRate;
-    int channels;
-    string fileName;
-    string fileExt;
-    
-    ofFbo recordFbo;
-    ofPixels recordPixels;
-
+    ofxUICanvas *gui2;   	
+    float simSpeed;
 };
