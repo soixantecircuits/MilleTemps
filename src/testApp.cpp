@@ -20,7 +20,6 @@ void testApp::setup(){
   int width = 1327;
   int height = 747;
   ofSetWindowShape(1327, 747);
-  ofSetWindowTitle(ofToString(ofGetFrameRate()));
 
   ofEnableAlphaBlending();
   spots.resize(nbLedProjector);
@@ -224,6 +223,7 @@ void testApp::update(){
   }
   display.update(spots);
   
+  ofSetWindowTitle(ofToString(ofGetFrameRate()));
 }
 
 //--------------------------------------------------------------
@@ -237,6 +237,8 @@ void testApp::draw(){
       movers[i].draw();
     }
   }
+    ofSetColor(255);
+    ofDrawBitmapString("Fps: " + ofToString( ofGetFrameRate()), ofGetWidth()-15,ofGetHeight() - 15);
 }
 
 //--------------------------------------------------------------
