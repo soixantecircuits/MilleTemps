@@ -11,8 +11,10 @@ void testApp::setup(){
   ofEnableSmoothing();
 
   spot = 0;
-
   nbLedProjector = 45;
+	dmx.connect("tty.usbserial-EN086808"); // use the name
+  dmx.setChannels(nbLedProjector*3);
+
   //display.setup("imgs/sub", nbLedProjector);
   display.setup("imgs/realistes_cropped", nbLedProjector);
   //ofSetWindowShape(base.getWidth(), base.getHeight());
@@ -26,6 +28,10 @@ void testApp::setup(){
   float step = 1./(nbLedProjector+1);
   for (int i = 0; i < (int) spots.size(); i++){
     spots[i].set(0);
+  }
+  dmxChannels.resize(nbLedProjector);
+  for (int i = 0; i < (int) dmxChannels.size(); i++){
+    dmxChannels[i] = 1 + i*3;
   }
   ofBackground(0);
 
@@ -90,6 +96,18 @@ void testApp::setup(){
     gui2->addSlider("Play X", 1, 100, &simSpeed, 95, dim);
   gui2->loadSettings("GUI/guiSettings2.xml"); 
 
+  metakPro.setup();
+	ofAddListener(metakPro.NEW_SENSORDATA,this,&testApp::onNewSensorData);
+  //metakPro.log();
+  metakPro.replay("test.log");
+}
+
+//--------------------------------------------------------------
+void testApp::onNewSensorData(SensorData & s){
+  cout <<  s.toString() << endl;
+  wind_speed = s.vitesse * 1000;
+  wind.y = s.direction;
+  temperature = s.temperature;
 }
 
 //--------------------------------------------------------------
@@ -221,9 +239,20 @@ void testApp::update(){
   for (int i = 0; i < nbLedProjector; i++){
     spots[i].setHsb(hue,colorSaturation/100.,spots[i].getBrightness());
   }
-  display.update(spots);
+  //display.update(spots);
+  updateDmx();
   
   ofSetWindowTitle(ofToString(ofGetFrameRate()));
+}
+
+//--------------------------------------------------------------
+void testApp::updateDmx(){
+  for (int i = 0; i < nbLedProjector; i++){ 
+    dmx.setLevel(dmxChannels[i], spots[i].r*255.);
+    dmx.setLevel(dmxChannels[i] + 1, spots[i].g*255.);
+    dmx.setLevel(dmxChannels[i] + 2, spots[i].b*255.);
+  }
+  dmx.update();
 }
 
 //--------------------------------------------------------------
@@ -238,7 +267,6 @@ void testApp::draw(){
     }
   }
     ofSetColor(255);
-    ofDrawBitmapString("Fps: " + ofToString( ofGetFrameRate()), ofGetWidth()-15,ofGetHeight() - 15);
 }
 
 //--------------------------------------------------------------

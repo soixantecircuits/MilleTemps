@@ -1,3 +1,5 @@
 ofxFX
 ofxUI
 ofxXmlSettings
+ofxSimpleSerial
+ofxDmx

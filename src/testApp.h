@@ -5,6 +5,8 @@
 #include "ofxUI.h"
 #include "mover.h"
 #include "LightenDisplay.h"
+#include "ofxMetakPro.h"
+#include "ofxDmx.h"
 
 class ledProjector{
  public:
@@ -35,9 +37,10 @@ public:
     void updateSpotFromMovers();
     void updateSpotFromMoversGaussian();
     void updatePerlinNoise();
+    void updateDmx();
     int spot;
     int nbLedProjector;
-    //vector<ledProjector> spots;
+    vector<int> dmxChannels;
     vector<ofFloatColor> spots;
     LightenDisplay display;
     int testFade;
@@ -62,4 +65,8 @@ public:
 
     ofxUICanvas *gui2;   	
     float simSpeed;
+
+    void onNewSensorData(SensorData & s);
+    ofxMetakPro metakPro;
+    ofxDmx dmx;
 };
