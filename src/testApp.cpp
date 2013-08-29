@@ -1,4 +1,6 @@
 #include "testApp.h"
+//#define SHADER_RENDERING
+
 float gaussian(float x, float mean, float variance) {  
   float dx = x - mean;  
   //return (1.f / sqrtf(TWO_PI * variance)) * expf(-(dx * dx) / (2 * variance));  
@@ -15,8 +17,11 @@ void testApp::setup(){
 	dmx.connect("tty.usbserial-EN086808"); // use the name
   dmx.setChannels(nbLedProjector*3);
 
+  #ifdef SHADER_RENDERING
   //display.setup("imgs/sub", nbLedProjector);
   display.setup("imgs/realistes_cropped", nbLedProjector);
+  #endif
+
   //ofSetWindowShape(base.getWidth(), base.getHeight());
   //ofSetWindowShape(800, 600);
   int width = 1327;
@@ -81,6 +86,9 @@ void testApp::setup(){
     gui->addWidgetDown(new ofxUILabel("TEMPERATURE", OFX_UI_FONT_MEDIUM));     
     gui->addSlider("temperature", -5, 40, &temperature, 95, dim);
     gui->addSlider("saturation", 0, 100, &colorSaturation, 95, dim);
+    gui->addSpacer(length, 2); 
+    gui->addWidgetDown(new ofxUILabel("ENSOLEILLEMENT", OFX_UI_FONT_MEDIUM));     
+    gui->addSlider("pyranometre", 0, 1, &pyranometre, 95, dim);
     /*
     gui->setWidgetPosition(OFX_UI_WIDGET_POSITION_RIGHT);
     gui->addSlider("BGG", 0, 255, backgroundColor.g, 95, dim);
@@ -94,6 +102,10 @@ void testApp::setup(){
 
     gui2->addSpacer(length, 2); 
     gui2->addSlider("Play X", 1, 100, &simSpeed, 95, dim);
+    gui2->addSlider("Pixel To World", 1*100000, 100*100000, &coefPixelToRealWorld, 95, dim);
+    //gui2->addSlider("Play X", 1, 100, &simSpeed, 95, dim);
+    gui2->addLabelToggle("SENSORS", &bUseSensors, true);
+    gui2->addLabelToggle("DMX", &bUseDmx, true);
   gui2->loadSettings("GUI/guiSettings2.xml"); 
 
   metakPro.setup();
@@ -105,9 +117,13 @@ void testApp::setup(){
 //--------------------------------------------------------------
 void testApp::onNewSensorData(SensorData & s){
   cout <<  s.toString() << endl;
-  wind_speed = s.vitesse * 1000;
-  wind.y = s.direction;
-  temperature = s.temperature;
+  if (bUseSensors){
+    wind_speed = s.vitesse * 1000;
+    wind.y = 90 + s.direction;
+    if (wind.y > 360) wind.y -= 360;
+    temperature = s.temperature;
+    pyranometre = s.pyranometre;
+  }
 }
 
 //--------------------------------------------------------------
@@ -119,7 +135,9 @@ void testApp::guiEvent(ofxUIEventArgs &e)
 	if(name == "ECLAIRAGE PUBLIQUE")
 	{
 		ofxUISlider *slider = (ofxUISlider *) e.widget; 
+    #ifdef SHADER_RENDERING
 		display.setBaseColor(ofColor(slider->getScaledValue())); 
+    #endif
   }
   else if(name == "R2SLIDERCIRCLEROTARY")
 	{
@@ -139,8 +157,7 @@ void testApp::guiEvent(ofxUIEventArgs &e)
 void testApp::updateMovers(){
   //ofVec2f wind(ofMap(mouseX, ofGetWidth()/2, ofGetWidth(), 0, 0.01), 0);
   ofVec2f windCartesian(-sin(ofDegToRad(wind.y)), cos(ofDegToRad(wind.y)));
-  float coef = 0.0001/6./10.;
-  ofVec2f windForce(coef * wind_speed * wind_speed * windCartesian);  
+  ofVec2f windForce(wind_speed * wind_speed * windCartesian/coefPixelToRealWorld);  
   ofVec2f gravity(0, 0.1);
   for (unsigned int i = 0; i < movers.size(); i++){
     //friction
@@ -239,7 +256,10 @@ void testApp::update(){
   for (int i = 0; i < nbLedProjector; i++){
     spots[i].setHsb(hue,colorSaturation/100.,spots[i].getBrightness());
   }
-  //display.update(spots);
+  #ifdef SHADER_RENDERING
+  display.update(spots);
+  #endif
+
   updateDmx();
   
   ofSetWindowTitle(ofToString(ofGetFrameRate()));
@@ -247,19 +267,24 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::updateDmx(){
-  for (int i = 0; i < nbLedProjector; i++){ 
-    dmx.setLevel(dmxChannels[i], spots[i].r*255.);
-    dmx.setLevel(dmxChannels[i] + 1, spots[i].g*255.);
-    dmx.setLevel(dmxChannels[i] + 2, spots[i].b*255.);
+  if ( bUseDmx && dmx.isConnected()){
+    for (int i = 0; i < nbLedProjector; i++){ 
+      dmx.setLevel(dmxChannels[i], spots[i].r*255.);
+      dmx.setLevel(dmxChannels[i] + 1, spots[i].g*255.);
+      dmx.setLevel(dmxChannels[i] + 2, spots[i].b*255.);
+    }
+    dmx.update();
   }
-  dmx.update();
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
   //ofBackgroundGradient(ofColor::gray, ofColor::black);
+  #ifdef SHADER_RENDERING
   ofSetColor(255);
   display.draw(0, 400);
+  #endif
+
   ofSetColor(255);
   if (bDrawMovers){
     for (unsigned int i = 0; i < movers.size(); i++){

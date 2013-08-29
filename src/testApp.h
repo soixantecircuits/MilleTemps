@@ -62,11 +62,15 @@ public:
     float wind_speed;
     float temperature;
     float colorSaturation;
+    float pyranometre;
+    float coefPixelToRealWorld;
 
     ofxUICanvas *gui2;   	
     float simSpeed;
 
     void onNewSensorData(SensorData & s);
     ofxMetakPro metakPro;
+    bool bUseSensors;
     ofxDmx dmx;
+    bool bUseDmx;
 };
