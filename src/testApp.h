@@ -64,6 +64,7 @@ public:
     float colorSaturation;
     float pyranometre;
     float coefPixelToRealWorld;
+    float frictionCoef;
 
     ofxUICanvas *gui2;   	
     float simSpeed;

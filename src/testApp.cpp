@@ -14,7 +14,8 @@ void testApp::setup(){
 
   spot = 0;
   nbLedProjector = 45;
-	dmx.connect("tty.usbserial-EN086808"); // use the name
+	//dmx.connect("tty.usbserial-EN086808"); // use the name
+	dmx.connect("ttyUSB1"); // use the name
   dmx.setChannels(nbLedProjector*3);
 
   #ifdef SHADER_RENDERING
@@ -48,7 +49,7 @@ void testApp::setup(){
   }
   bFirst = false;
   bLast = false;
-  movers.resize(32);
+  movers.resize(16);
   for (unsigned int i = 0; i < movers.size(); i++){
     movers[i].setup();
     //movers[i].setMass(ofRandom(0.5, 2));
@@ -103,6 +104,7 @@ void testApp::setup(){
     gui2->addSpacer(length, 2); 
     gui2->addSlider("Play X", 1, 100, &simSpeed, 95, dim);
     gui2->addSlider("Pixel To World", 1*100000, 100*100000, &coefPixelToRealWorld, 95, dim);
+    gui2->addSlider("Friction", 0.000, 0.01, &frictionCoef, 95, dim);
     //gui2->addSlider("Play X", 1, 100, &simSpeed, 95, dim);
     gui2->addLabelToggle("SENSORS", &bUseSensors, true);
     gui2->addLabelToggle("DMX", &bUseDmx, true);
@@ -110,15 +112,15 @@ void testApp::setup(){
 
   metakPro.setup();
 	ofAddListener(metakPro.NEW_SENSORDATA,this,&testApp::onNewSensorData);
-  //metakPro.log();
-  metakPro.replay("test.log");
+  metakPro.log();
+  //metakPro.replay("test.log");
 }
 
 //--------------------------------------------------------------
 void testApp::onNewSensorData(SensorData & s){
   cout <<  s.toString() << endl;
   if (bUseSensors){
-    wind_speed = s.vitesse * 1000;
+    wind_speed = s.vitesse;// * 1000;
     wind.y = 90 + s.direction;
     if (wind.y > 360) wind.y -= 360;
     temperature = s.temperature;
@@ -161,14 +163,14 @@ void testApp::updateMovers(){
   ofVec2f gravity(0, 0.1);
   for (unsigned int i = 0; i < movers.size(); i++){
     //friction
-    float c = 0.01;
+    float c = frictionCoef;
     ofVec2f friction(movers[i].getVelocity());
     friction *= -1;
     friction.normalize();
     friction *= c;
 
 
-    //movers[i].applyForce(friction);
+    movers[i].applyForce(friction);
     movers[i].applyForce(windForce);
     //movers[i].applyForce(gravity);
     movers[i].update();
@@ -269,9 +271,9 @@ void testApp::update(){
 void testApp::updateDmx(){
   if ( bUseDmx && dmx.isConnected()){
     for (int i = 0; i < nbLedProjector; i++){ 
-      dmx.setLevel(dmxChannels[i], spots[i].r*255.);
-      dmx.setLevel(dmxChannels[i] + 1, spots[i].g*255.);
-      dmx.setLevel(dmxChannels[i] + 2, spots[i].b*255.);
+      dmx.setLevel(dmxChannels[i], ofClamp(spots[i].r*255., 0, 255));
+      dmx.setLevel(dmxChannels[i] + 1, ofClamp(spots[i].g*255., 0, 255));
+      dmx.setLevel(dmxChannels[i] + 2, ofClamp(spots[i].b*255., 0, 255));
     }
     dmx.update();
   }

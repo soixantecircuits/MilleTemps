@@ -10,7 +10,7 @@ void ofxMetakPro::log(){
 	serial.startContinuousRead(false);
 	ofAddListener(serial.NEW_MESSAGE,this,&ofxMetakPro::onNewMessage);
 
-	//ofLogToFile("logfile.log", true); //set channel to log file. log file resides in the /bin/data folder
+	ofLogToFile("logfile.log", true); //set channel to log file. log file resides in the /bin/data folder
 	ofSetLogLevel(OF_LOG_NOTICE);
 	ofLogNotice() << "Start program" << endl;
 }
