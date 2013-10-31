@@ -15,6 +15,9 @@ void testApp::setup(){
   spot = 0;
   nbLedProjector = 45;
 	//dmx.connect("tty.usbserial-EN086808"); // use the name
+	// to see the permanent path of your device: $ sudo udevadm info --query=all --name=ttyUSB0
+	// use the "by-id" path, ie. serial/by-id/usb-9710_7720-if00-port0
+	
 	dmx.connect("ttyUSB1"); // use the name
   dmx.setChannels(nbLedProjector*3);
 
