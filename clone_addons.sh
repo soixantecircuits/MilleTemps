@@ -4,7 +4,7 @@
 
 cd ../../../addons/
 
-addons=('kylemcdonald/ofxDmx.git' 'emmanuelgeoffray/ofxFX.git' 'emmanuelgeoffray/ofxUI.git -b feature-ofxUIRotarySliderPointingDirection')
+addons=('LeoColomb/ofxSimpleSerial.git' 'kylemcdonald/ofxDmx.git' 'emmanuelgeoffray/ofxFX.git' 'emmanuelgeoffray/ofxUI.git -b feature-ofxUIRotarySliderPointingDirection')
 
 if [ -z $1 ]; then
     PREFIX="git clone https://github.com/"

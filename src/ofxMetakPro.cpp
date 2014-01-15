@@ -6,7 +6,7 @@ void ofxMetakPro::setup(){
 
 //--------------------------------------------------------------
 void ofxMetakPro::log(){
-	serial.setup("/dev/ttyUSB0", 19200);
+	serial.setup("/dev/ttyUSB1", 19200);
 	serial.startContinuousRead(false);
 	ofAddListener(serial.NEW_MESSAGE,this,&ofxMetakPro::onNewMessage);
 

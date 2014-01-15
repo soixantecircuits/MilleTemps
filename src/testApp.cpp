@@ -17,8 +17,13 @@ void testApp::setup(){
 	//dmx.connect("tty.usbserial-EN086808"); // use the name
 	// to see the permanent path of your device: $ sudo udevadm info --query=all --name=ttyUSB0
 	// use the "by-id" path, ie. serial/by-id/usb-9710_7720-if00-port0
+  // if not found but works with sudo:
+  // sudo usermod -a -G dialout minad
+  // minad is the name of user you're running
+  // then:
+  // sudo chmod a+rw /dev/ttyUSB0
 	
-	dmx.connect("ttyUSB1"); // use the name
+	dmx.connect("ttyUSB0"); // use the name
   dmx.setChannels(nbLedProjector*3);
 
   #ifdef SHADER_RENDERING
@@ -274,10 +279,16 @@ void testApp::update(){
 void testApp::updateDmx(){
   if ( bUseDmx && dmx.isConnected()){
     for (int i = 0; i < nbLedProjector; i++){ 
-      dmx.setLevel(dmxChannels[i], ofClamp(spots[i].r*255., 0, 255));
-      dmx.setLevel(dmxChannels[i] + 1, ofClamp(spots[i].g*255., 0, 255));
-      dmx.setLevel(dmxChannels[i] + 2, ofClamp(spots[i].b*255., 0, 255));
+      dmx.setLevel(dmxChannels[i], ofMap(spots[i].r, 0, 1,60,255,true));
+      dmx.setLevel(dmxChannels[i]+1, ofMap(spots[i].g, 0, 1,59,255,true));
+      dmx.setLevel(dmxChannels[i]+2, ofMap(spots[i].b, 0, 1,59,255,true));
     }
+    /*
+      dmx.setLevel(dmxChannels[0], 255);
+      dmx.setLevel(dmxChannels[1], 255);
+      dmx.setLevel(dmxChannels[2], 255);
+      */
+    cout << "Level: " << (int)dmx.getLevel(dmxChannels[0]) << "\t" << (int)dmx.getLevel(dmxChannels[1]) << "\t" << (int)dmx.getLevel(dmxChannels[2]) << endl;
     dmx.update();
   }
 }

@@ -1,7 +1,7 @@
 <Widget>
     <Kind>4</Kind>
     <Name>Play X</Name>
-    <Value>8.294736862</Value>
+    <Value>1.000000000</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
@@ -11,7 +11,7 @@
 <Widget>
     <Kind>4</Kind>
     <Name>Friction</Name>
-    <Value>0.000000000</Value>
+    <Value>0.003473684</Value>
 </Widget>
 <Widget>
     <Kind>17</Kind>
