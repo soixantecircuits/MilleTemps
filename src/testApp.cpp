@@ -23,7 +23,7 @@ void testApp::setup(){
   // then:
   // sudo chmod a+rw /dev/ttyUSB0
 	
-	dmx.connect("ttyUSB0"); // use the name
+	dmx.connect("serial/by-id/usb-ENTTEC_DMX_USB_PRO_EN086808-if00-port0"); // use the name
   dmx.setChannels(nbLedProjector*3);
   reconnectDmxDelay = 0;
 

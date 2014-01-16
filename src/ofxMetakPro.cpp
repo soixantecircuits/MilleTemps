@@ -9,7 +9,7 @@ void ofxMetakPro::log(){
   connect = true;
   reconnectDelay = 0;
   ofAddListener(ofEvents().update,this,&ofxMetakPro::update);
-	serial.setup("/dev/ttyUSB1", 19200);
+	serial.setup("/dev/serial/by-id/usb-Moxa_Technologies_Co.__Ltd._UPort_1130-if00-port0", 19200);
 	serial.startContinuousRead(false);
 	ofAddListener(serial.NEW_MESSAGE,this,&ofxMetakPro::onNewMessage);
 
