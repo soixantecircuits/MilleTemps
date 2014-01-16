@@ -15,8 +15,9 @@ void testApp::setup(){
   spot = 0;
   nbLedProjector = 45;
 	//dmx.connect("tty.usbserial-EN086808"); // use the name
-	dmx.connect("ttyUSB1"); // use the name
+	dmx.connect("ttyUSB0"); // use the name
   dmx.setChannels(nbLedProjector*3);
+  reconnectDmxDelay = 0;
 
   #ifdef SHADER_RENDERING
   //display.setup("imgs/sub", nbLedProjector);
@@ -276,6 +277,11 @@ void testApp::updateDmx(){
       dmx.setLevel(dmxChannels[i] + 2, ofClamp(spots[i].b*255., 0, 255));
     }
     dmx.update();
+  }
+
+  if ( !dmx.isConnected() && reconnectDmxDelay < ofGetElapsedTimef()){
+    dmx.connect("ttyUSB0"); // use the name
+    reconnectDmxDelay = ofGetElapsedTimef() + 1000;
   }
 }
 
