@@ -6,7 +6,10 @@ void ofxMetakPro::setup(){
 
 //--------------------------------------------------------------
 void ofxMetakPro::log(){
-	serial.setup("/dev/ttyUSB1", 19200);
+  connect = true;
+  reconnectDelay = 0;
+  ofAddListener(ofEvents().update,this,&ofxMetakPro::update);
+	serial.setup("/dev/serial/by-id/usb-Moxa_Technologies_Co.__Ltd._UPort_1130-if00-port0", 19200);
 	serial.startContinuousRead(false);
 	ofAddListener(serial.NEW_MESSAGE,this,&ofxMetakPro::onNewMessage);
 
@@ -32,6 +35,7 @@ void ofxMetakPro::newData(string & message)
 
 //--------------------------------------------------------------
 void ofxMetakPro::replay(string filename){
+  connect = false;
   buffer = ofBufferFromFile(filename);
   nextLine = 0;
   ofAddListener(ofEvents().update,this,&ofxMetakPro::update);
@@ -39,11 +43,17 @@ void ofxMetakPro::replay(string filename){
 
 //--------------------------------------------------------------
 void ofxMetakPro::update(ofEventArgs & args){
-	float elapsedTime = ofGetElapsedTimef();
-	if(elapsedTime >= nextLine){
-		nextLine = elapsedTime + 1; // triggerOne fires every second
-    sendNextLine();
-	}
+  if (connect && !serial.isInitialized() && reconnectDelay < ofGetElapsedTimef()){
+    reconnectDelay = ofGetElapsedTimef()+1000;
+    serial.setup("/dev/ttyUSB1", 19200);
+    serial.startContinuousRead(false);
+  } else {
+    float elapsedTime = ofGetElapsedTimef();
+    if(elapsedTime >= nextLine){
+      nextLine = elapsedTime + 1; // triggerOne fires every second
+      sendNextLine();
+    }
+  }
 }
 
 //--------------------------------------------------------------

@@ -22,5 +22,7 @@ class ofxMetakPro : public ofBaseApp{
     ofxSimpleSerial	serial;
     float nextLine;
     ofBuffer buffer;
+    float reconnectDelay;
+    bool connect;
 
 };

@@ -25,6 +25,7 @@ void testApp::setup(){
 	
 	dmx.connect("/dev/serial/by-id/usb-ENTTEC_DMX_USB_PRO_EN086808-if00-port0"); // use the name
   dmx.setChannels(nbLedProjector*3);
+  reconnectDmxDelay = 0;
 
   #ifdef SHADER_RENDERING
   //display.setup("imgs/sub", nbLedProjector);
@@ -290,6 +291,11 @@ void testApp::updateDmx(){
       */
     cout << "Level: " << (int)dmx.getLevel(dmxChannels[0]) << "\t" << (int)dmx.getLevel(dmxChannels[1]) << "\t" << (int)dmx.getLevel(dmxChannels[2]) << endl;
     dmx.update();
+  }
+
+  if ( !dmx.isConnected() && reconnectDmxDelay < ofGetElapsedTimef()){
+    dmx.connect("ttyUSB0"); // use the name
+    reconnectDmxDelay = ofGetElapsedTimef() + 1000;
   }
 }
 

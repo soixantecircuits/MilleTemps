@@ -74,4 +74,5 @@ public:
     bool bUseSensors;
     ofxDmx dmx;
     bool bUseDmx;
+    float reconnectDmxDelay;
 };
