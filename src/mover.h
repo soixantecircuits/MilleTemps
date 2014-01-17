@@ -2,7 +2,7 @@
 
 #include "ofMain.h"
 
-class mover {
+class Mover {
 
 	public:
 		void setup(){
@@ -25,7 +25,6 @@ class mover {
     }
 
 		void draw(){
-      ofSetColor(175);
       ofEllipse(location, mass / density, mass /density);
     }
 
@@ -34,6 +33,9 @@ class mover {
     }
     void setDensity(float d){
       density = d;
+    }
+		void setVelocity(const ofVec2f & v){
+      velocity = v;
     }
 
     void setLocation( float x, float y){
@@ -69,6 +71,9 @@ class mover {
         location.y = 0;
       }
 
+    }
+    static bool shouldRemoveOffScreen(ofPtr<Mover> circle){
+      return circle.get()->getLocation().x < -500 || circle.get()->getLocation().x > ofGetWidth()+500 ;
     }
 		
   private:

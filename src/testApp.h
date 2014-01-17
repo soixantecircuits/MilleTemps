@@ -52,7 +52,7 @@ public:
     vector<int> gaussienne;
     bool bFirst;
     bool bLast;
-    vector<mover> movers;
+    vector< ofPtr<Mover> > movers;
     bool bDrawMovers;
     float yoff;
     float yoff_inc;
@@ -70,6 +70,7 @@ public:
     float pyranometre;
     float coefPixelToRealWorld;
     float frictionCoef;
+    float speedIntensity;
 
     ofxUICanvas *gui2;   	
     float simSpeed;

@@ -101,7 +101,8 @@ void testApp::setup(){
   }
   bFirst = false;
   bLast = false;
-  movers.resize(16);
+  //movers.resize(16);
+  /*
   for (unsigned int i = 0; i < movers.size(); i++){
     movers[i].setup();
     //movers[i].setMass(ofRandom(0.5, 2));
@@ -111,6 +112,7 @@ void testApp::setup(){
     //movers[i].setMass(1);
     movers[i].setLocation(ofRandom(-1,2)*width, 0);
   }
+  */
   yoff = ofRandom(0, 1000);
   yoff_inc = 0.005;
   yoff_inc = 0.3;
@@ -133,6 +135,7 @@ void testApp::setup(){
     gui->addWidgetDown(new ofxUILabel("NUAGES", OFX_UI_FONT_MEDIUM));     
     gui->addSlider("largeur_", 0.1, 20, &sd, 95, dim);
     gui->addSlider("intensite_", 0, 100, &gaussian_intensite, 95, dim);
+    gui->addSlider("intensite_vitesse", 0, 100, &speedIntensity, 95, dim);
     gui->addSpacer(length, 2); 
     gui->addWidgetDown(new ofxUILabel("VENT", OFX_UI_FONT_MEDIUM));     
     gui->addWidgetDown(new ofxUIRotaryCircleSlider("R2SLIDERCIRCLEROTARY", ofPoint(0,60), ofPoint(0,360), &wind, dim*8));
@@ -157,7 +160,7 @@ void testApp::setup(){
 
     gui2->addSpacer(length, 2); 
     gui2->addSlider("Play X", 1, 100, &simSpeed, 95, dim);
-    gui2->addSlider("Pixel To World", 1*100000, 100*100000, &coefPixelToRealWorld, 95, dim);
+    gui2->addSlider("Pixel To World", 1, 100, &coefPixelToRealWorld, 95, dim);
     gui2->addSlider("Friction", 0.000, 0.01, &frictionCoef, 95, dim);
     //gui2->addSlider("Play X", 1, 100, &simSpeed, 95, dim);
     gui2->addLabelToggle("SENSORS", &bUseSensors, true);
@@ -216,22 +219,49 @@ void testApp::updateMovers(){
   //ofVec2f wind(ofMap(mouseX, ofGetWidth()/2, ofGetWidth(), 0, 0.01), 0);
   ofVec2f windCartesian(-sin(ofDegToRad(wind.y)), cos(ofDegToRad(wind.y)));
   ofVec2f windForce(wind_speed * wind_speed * windCartesian/coefPixelToRealWorld);  
-  ofVec2f gravity(0, 0.1);
+  //ofVec2f gravity(0, 0.1);
+  //generate balls here
+  if (ofRandomuf() < 0.0001 * wind_speed){
+		movers.push_back(ofPtr<Mover>(new Mover()));
+		movers.back().get()->setup();
+    //movers.back().get()->setMass(ofRandom(0.1, 4));
+    movers.back().get()->setMass(1);
+    ofVec2f location;
+    location.y = ofGetHeight()/2.;
+    if (windCartesian.x > 0){
+      //location.x =  0-movers.back().get()->getDiameter();
+      location.x =  -100;
+    }
+    else {
+      //location.x =  ofGetWidth();
+      location.x =  ofGetWidth()+100;
+    }
+
+    //coefPixelToRealWorld = 1;
+    movers.back().get()->setLocation(location.x, location.y);
+    windCartesian.y = 0;
+    movers.back().get()->setVelocity(windCartesian*wind_speed/coefPixelToRealWorld);
+
+  }
+  // update balls
   for (unsigned int i = 0; i < movers.size(); i++){
     //friction
     float c = frictionCoef;
-    ofVec2f friction(movers[i].getVelocity());
+    ofVec2f friction(movers[i].get()->getVelocity());
     friction *= -1;
     friction.normalize();
     friction *= c;
 
 
-    movers[i].applyForce(friction);
-    movers[i].applyForce(windForce);
+    movers[i].get()->applyForce(friction);
+    //movers[i].applyForce(windForce);
     //movers[i].applyForce(gravity);
-    movers[i].update();
-    movers[i].checkEdges();
+    movers[i].get()->update();
+    movers[i].get()->checkEdges();
   }
+  // delete balls
+  ofRemove(movers, Mover::shouldRemoveOffScreen);
+
 }
 
 //--------------------------------------------------------------
@@ -241,17 +271,17 @@ void testApp::updateSpotFromMovers(){
   //  spots[i].set(0);
   //}
   for (int i = 0; i < (int) movers.size(); i++){
-    float diameter = movers[i].getDiameter();
+    float diameter = movers[i].get()->getDiameter();
     float radius = diameter/2.;
-    int start = floor((movers[i].getLocation().x-radius)/interval);
-    int end = ceil((movers[i].getLocation().x+radius)/interval);
+    int start = floor((movers[i].get()->getLocation().x-radius)/interval);
+    int end = ceil((movers[i].get()->getLocation().x+radius)/interval);
     start = ofClamp(start, 0, spots.size()-1);
     end = ofClamp(end, 0, spots.size()-1);
-    ofRectangle ball(movers[i].getLocation().x-radius, movers[i].getLocation().y-radius, diameter, diameter);
+    ofRectangle ball(movers[i].get()->getLocation().x-radius, movers[i].get()->getLocation().y-radius, diameter, diameter);
     for (int j = start; j < end; j++){
       ofRectangle intervalRect(j*interval, 0, interval, ofGetHeight());
       ofRectangle intersect = intervalRect.getIntersection(ball);
-      spots[j]+=1/movers[i].getMass()*intersect.getArea()/400.;
+      spots[j]+=1/movers[i].get()->getMass()*intersect.getArea()/400.;
     }
   }
 }
@@ -260,11 +290,12 @@ void testApp::updateSpotFromMovers(){
 void testApp::updateSpotFromMoversGaussian(){
   float interval = ofGetWidth()/nbLedProjector;
   for (int i = 0; i < (int) movers.size(); i++){
-    float diameter = movers[i].getDiameter();
+    float diameter = movers[i].get()->getDiameter();
     float radius = diameter/2.;
-    float where = (movers[i].getLocation().x-radius)/interval;
+    float where = (movers[i].get()->getLocation().x-radius)/interval;
+    float speedCoef = ofMap(movers[i].get()->getVelocity().length(),0,1,speedIntensity/100,1.0,true);
      for (int i = 0; i < nbLedProjector; i++){
-      float value = gaussian(i, where, sd)*gaussian_intensite/100;
+      float value = gaussian(i, where, sd)*gaussian_intensite/100*speedCoef;
       spots[i]+=value;
     }
   }
@@ -403,7 +434,9 @@ void testApp::draw(){
   ofSetColor(255);
   if (bDrawMovers){
     for (unsigned int i = 0; i < movers.size(); i++){
-      movers[i].draw();
+      float speedCoef = ofMap(movers[i].get()->getVelocity().length(),0,1,speedIntensity/100,1.0,true);
+      ofSetColor(175*speedCoef);
+      movers[i].get()->draw();
     }
   }
     ofSetColor(255);
