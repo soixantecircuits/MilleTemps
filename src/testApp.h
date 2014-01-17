@@ -65,6 +65,7 @@ public:
     float sd;
     float gaussian_intensite;
     float wind_speed;
+    float last_wind_speed;
     float temperature;
     float colorSaturation;
     float pyranometre;

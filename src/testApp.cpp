@@ -221,7 +221,7 @@ void testApp::updateMovers(){
   ofVec2f windForce(wind_speed * wind_speed * windCartesian/coefPixelToRealWorld);  
   //ofVec2f gravity(0, 0.1);
   //generate balls here
-  if (ofRandomuf() < 0.0001 * wind_speed){
+  if (wind_speed > 2 && (ofRandomuf() < 0.0001 * wind_speed || wind_speed - last_wind_speed > 4)){
 		movers.push_back(ofPtr<Mover>(new Mover()));
 		movers.back().get()->setup();
     //movers.back().get()->setMass(ofRandom(0.1, 4));
@@ -240,9 +240,11 @@ void testApp::updateMovers(){
     //coefPixelToRealWorld = 1;
     movers.back().get()->setLocation(location.x, location.y);
     windCartesian.y = 0;
+    windCartesian.normalize();
     movers.back().get()->setVelocity(windCartesian*wind_speed/coefPixelToRealWorld);
 
   }
+  last_wind_speed = wind_speed;
   // update balls
   for (unsigned int i = 0; i < movers.size(); i++){
     //friction
