@@ -6,7 +6,7 @@
 <Widget>
     <Kind>4</Kind>
     <Name>vitesse</Name>
-    <Value>0.013599999</Value>
+    <Value>0.002800000</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
@@ -26,28 +26,28 @@
 <Widget>
     <Kind>4</Kind>
     <Name>intensite_</Name>
-    <Value>6.315789223</Value>
+    <Value>100.000000000</Value>
 </Widget>
 <Widget>
     <Kind>11</Kind>
     <Name>R2SLIDERCIRCLEROTARY</Name>
-    <XValue>60.000000000</XValue>
-    <YValue>270.000000000</YValue>
+    <XValue>35.883110046</XValue>
+    <YValue>123.274887085</YValue>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>vitesse (en km/h)</Name>
-    <Value>60.000003815</Value>
+    <Value>35.883110046</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>temperature</Name>
-    <Value>-5.000000000</Value>
+    <Value>27.684211731</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>saturation</Name>
-    <Value>32.631580353</Value>
+    <Value>31.578945160</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>

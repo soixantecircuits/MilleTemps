@@ -9,7 +9,7 @@ class mover {
       location.set(30, 30);
       velocity.set(0, 0);
       acceleration.set(0, 0);
-      mass = 1;
+      mass = 0.01;
       density = 1/16.;
     }
 

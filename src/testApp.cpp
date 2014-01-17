@@ -23,7 +23,7 @@ void testApp::setup(){
   // then:
   // sudo chmod a+rw /dev/ttyUSB0
 	
-	dmx.connect("ttyUSB0"); // use the name
+	dmx.connect("/dev/serial/by-id/usb-ENTTEC_DMX_USB_PRO_EN086808-if00-port0"); // use the name
   dmx.setChannels(nbLedProjector*3);
 
   #ifdef SHADER_RENDERING
@@ -279,9 +279,9 @@ void testApp::update(){
 void testApp::updateDmx(){
   if ( bUseDmx && dmx.isConnected()){
     for (int i = 0; i < nbLedProjector; i++){ 
-      dmx.setLevel(dmxChannels[i], ofMap(spots[i].r, 0, 1,60,255,true));
-      dmx.setLevel(dmxChannels[i]+1, ofMap(spots[i].g, 0, 1,59,255,true));
-      dmx.setLevel(dmxChannels[i]+2, ofMap(spots[i].b, 0, 1,59,255,true));
+      dmx.setLevel(dmxChannels[i], ofMap(spots[i].r, 0, 1,62,255,true));
+      dmx.setLevel(dmxChannels[i]+1, ofMap(spots[i].g, 0, 1,61,255,true));
+      dmx.setLevel(dmxChannels[i]+2, ofMap(spots[i].b, 0, 1,61,255,true));
     }
     /*
       dmx.setLevel(dmxChannels[0], 255);
