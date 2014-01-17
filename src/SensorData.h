@@ -10,7 +10,7 @@ class SensorData {
 
       if (input.size() >= 14){
         direction = ofToInt(input[1]);
-        vitesse = ofToFloat(input[2]);
+        vitesse = ofToFloat(input[2])/1000.*60.*60.;
         pression = ofToFloat(input[3]);
         humidite = ofToFloat(input[4]);
         temperature = ofToFloat(input[5]);

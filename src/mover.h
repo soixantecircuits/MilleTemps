@@ -32,6 +32,9 @@ class mover {
     void setMass(float m){
       mass = m;
     }
+    void setDensity(float d){
+      density = d;
+    }
 
     void setLocation( float x, float y){
       location.set(x, y);

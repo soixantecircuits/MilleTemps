@@ -1,12 +1,12 @@
 <Widget>
     <Kind>4</Kind>
     <Name>Play X</Name>
-    <Value>100.000000000</Value>
+    <Value>1.000000000</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>Pixel To World</Name>
-    <Value>1246315.750000000</Value>
+    <Value>1558947.375000000</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
@@ -16,7 +16,7 @@
 <Widget>
     <Kind>17</Kind>
     <Name>SENSORS</Name>
-    <Value>0</Value>
+    <Value>1</Value>
 </Widget>
 <Widget>
     <Kind>17</Kind>

@@ -3,3 +3,4 @@ ofxUI
 ofxXmlSettings
 ofxSimpleSerial
 ofxDmx
+ofxOsc

@@ -7,6 +7,7 @@
 #include "LightenDisplay.h"
 #include "ofxMetakPro.h"
 #include "ofxDmx.h"
+#include "ofxOsc.h"
 
 class ledProjector{
  public:
@@ -38,9 +39,13 @@ public:
     void updateSpotFromMoversGaussian();
     void updatePerlinNoise();
     void updateDmx();
+    void updateOsc();
+    void turnOn();
+    void turnOff();
     int spot;
     int nbLedProjector;
-    vector<int> dmxChannels;
+    //vector<int> dmxChannels;
+    vector< vector<int> > dmxChannels;
     vector<ofFloatColor> spots;
     LightenDisplay display;
     int testFade;
@@ -75,4 +80,6 @@ public:
     ofxDmx dmx;
     bool bUseDmx;
     float reconnectDmxDelay;
+
+    ofxOscReceiver oscReceiver;
 };

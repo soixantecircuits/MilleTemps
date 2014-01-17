@@ -13,7 +13,7 @@ void testApp::setup(){
   ofEnableSmoothing();
 
   spot = 0;
-  nbLedProjector = 45;
+  nbLedProjector = 34;
 	//dmx.connect("tty.usbserial-EN086808"); // use the name
 	// to see the permanent path of your device: $ sudo udevadm info --query=all --name=ttyUSB0
 	// use the "by-id" path, ie. serial/by-id/usb-9710_7720-if00-port0
@@ -24,7 +24,7 @@ void testApp::setup(){
   // sudo chmod a+rw /dev/ttyUSB0
 	
 	dmx.connect("/dev/serial/by-id/usb-ENTTEC_DMX_USB_PRO_EN086808-if00-port0"); // use the name
-  dmx.setChannels(nbLedProjector*3);
+  dmx.setChannels(45*3);
   reconnectDmxDelay = 0;
 
   #ifdef SHADER_RENDERING
@@ -45,9 +45,52 @@ void testApp::setup(){
     spots[i].set(0);
   }
   dmxChannels.resize(nbLedProjector);
-  for (int i = 0; i < (int) dmxChannels.size(); i++){
-    dmxChannels[i] = 1 + i*3;
-  }
+  dmxChannels[0].push_back(1);
+  dmxChannels[1].push_back(4);
+  dmxChannels[2].push_back(7);
+  dmxChannels[2].push_back(10);
+  dmxChannels[3].push_back(13);
+  dmxChannels[4].push_back(16);
+  dmxChannels[4].push_back(19);
+  dmxChannels[5].push_back(22);
+  dmxChannels[6].push_back(25);
+  dmxChannels[6].push_back(31);
+  dmxChannels[7].push_back(28);
+  dmxChannels[8].push_back(34);
+  dmxChannels[9].push_back(37);
+  dmxChannels[10].push_back(40);
+  dmxChannels[11].push_back(43);
+  dmxChannels[12].push_back(46);
+  dmxChannels[13].push_back(49);
+  dmxChannels[14].push_back(52);
+  dmxChannels[14].push_back(55);
+  dmxChannels[14].push_back(58);
+  dmxChannels[15].push_back(61);
+  dmxChannels[15].push_back(64);
+  dmxChannels[15].push_back(67);
+  dmxChannels[16].push_back(70);
+  dmxChannels[17].push_back(73);
+  dmxChannels[18].push_back(76);
+  dmxChannels[19].push_back(79);
+  dmxChannels[20].push_back(82);
+  dmxChannels[21].push_back(85);
+  dmxChannels[22].push_back(88);
+  dmxChannels[23].push_back(91);
+  dmxChannels[24].push_back(94);
+  dmxChannels[24].push_back(97);
+  dmxChannels[25].push_back(100);
+  dmxChannels[25].push_back(103);
+  dmxChannels[26].push_back(106);
+  dmxChannels[27].push_back(109);
+  dmxChannels[27].push_back(112);
+  dmxChannels[28].push_back(115);
+  dmxChannels[29].push_back(118);
+  dmxChannels[29].push_back(121);
+  dmxChannels[30].push_back(124);
+  dmxChannels[31].push_back(127);
+  dmxChannels[32].push_back(130);
+  dmxChannels[33].push_back(133);
+
   ofBackground(0);
 
   gaussienne.resize(500);
@@ -63,6 +106,8 @@ void testApp::setup(){
     movers[i].setup();
     //movers[i].setMass(ofRandom(0.5, 2));
     movers[i].setMass(ofRandom(0.1, 4));
+    //movers[i].setMass(0.1);
+    //movers[i].setDensity(0.01);
     //movers[i].setMass(1);
     movers[i].setLocation(ofRandom(-1,2)*width, 0);
   }
@@ -123,6 +168,8 @@ void testApp::setup(){
 	ofAddListener(metakPro.NEW_SENSORDATA,this,&testApp::onNewSensorData);
   metakPro.log();
   //metakPro.replay("test.log");
+
+	oscReceiver.setup(6666);
 }
 
 //--------------------------------------------------------------
@@ -256,6 +303,49 @@ void testApp::updatePerlinNoise(){
 }
 
 //--------------------------------------------------------------
+void testApp::updateOsc(){
+
+
+	// check for waiting messages
+	while(oscReceiver.hasWaitingMessages()){
+		// get the next message
+		ofxOscMessage m;
+		oscReceiver.getNextMessage(&m);
+
+		// check for mouse moved message
+		if(m.getAddress() == "/milletemps/on"){
+			// both the arguments are int32's
+			//mouseX = m.getArgAsInt32(0);
+      turnOn();
+		}
+		else if(m.getAddress() == "/milletemps/off"){
+			// both the arguments are int32's
+			//mouseX = m.getArgAsInt32(0);
+      turnOff();
+		}
+  }
+}
+	
+//--------------------------------------------------------------
+void testApp::turnOn(){
+  bUseDmx = true;
+}
+	
+//--------------------------------------------------------------
+void testApp::turnOff(){
+  cout << "off" << endl;
+  for (int i = 0; i < nbLedProjector; i++){ 
+    for (int j = 0; j < (int)dmxChannels[i].size(); j++){ 
+      dmx.setLevel(dmxChannels[i][j], 0);
+      dmx.setLevel(dmxChannels[i][j]+1, 0);
+      dmx.setLevel(dmxChannels[i][j]+2, 0);
+    }
+  }
+  dmx.update();
+  bUseDmx = false;
+}
+	
+//--------------------------------------------------------------
 void testApp::update(){
   for (int i = 0; i < simSpeed; i++){
     updatePerlinNoise();
@@ -272,6 +362,7 @@ void testApp::update(){
   #endif
 
   updateDmx();
+  updateOsc();
   
   ofSetWindowTitle(ofToString(ofGetFrameRate()));
 }
@@ -280,16 +371,18 @@ void testApp::update(){
 void testApp::updateDmx(){
   if ( bUseDmx && dmx.isConnected()){
     for (int i = 0; i < nbLedProjector; i++){ 
-      dmx.setLevel(dmxChannels[i], ofMap(spots[i].r, 0, 1,62,255,true));
-      dmx.setLevel(dmxChannels[i]+1, ofMap(spots[i].g, 0, 1,61,255,true));
-      dmx.setLevel(dmxChannels[i]+2, ofMap(spots[i].b, 0, 1,61,255,true));
+      for (int j = 0; j < (int)dmxChannels[i].size(); j++){ 
+        dmx.setLevel(dmxChannels[i][j], ofMap(spots[i].r, 0, 1,62,255,true));
+        dmx.setLevel(dmxChannels[i][j]+1, ofMap(spots[i].g, 0, 1,61,255,true));
+        dmx.setLevel(dmxChannels[i][j]+2, ofMap(spots[i].b, 0, 1,61,255,true));
+      }
     }
     /*
       dmx.setLevel(dmxChannels[0], 255);
       dmx.setLevel(dmxChannels[1], 255);
       dmx.setLevel(dmxChannels[2], 255);
       */
-    cout << "Level: " << (int)dmx.getLevel(dmxChannels[0]) << "\t" << (int)dmx.getLevel(dmxChannels[1]) << "\t" << (int)dmx.getLevel(dmxChannels[2]) << endl;
+    //cout << "Level: " << (int)dmx.getLevel(dmxChannels[0][0]) << "\t" << (int)dmx.getLevel(dmxChannels[0][0]+1) << "\t" << (int)dmx.getLevel(dmxChannels[0][0]+2) << endl;
     dmx.update();
   }
 
