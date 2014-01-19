@@ -21,7 +21,7 @@
 <Widget>
     <Kind>4</Kind>
     <Name>largeur_</Name>
-    <Value>4.079999924</Value>
+    <Value>4.498947144</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
@@ -36,26 +36,26 @@
 <Widget>
     <Kind>11</Kind>
     <Name>R2SLIDERCIRCLEROTARY</Name>
-    <XValue>1.980000019</XValue>
-    <YValue>167.000000000</YValue>
+    <XValue>21.213203430</XValue>
+    <YValue>125.474403381</YValue>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>vitesse (en km/h)</Name>
-    <Value>5.039999962</Value>
+    <Value>56.631492615</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>temperature</Name>
-    <Value>11.700000763</Value>
+    <Value>9.699999809</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>saturation</Name>
-    <Value>40.000000000</Value>
+    <Value>22.105262756</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>pyranometre</Name>
-    <Value>0.500000000</Value>
+    <Value>1.000000000</Value>
 </Widget>

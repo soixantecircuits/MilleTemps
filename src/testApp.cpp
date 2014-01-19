@@ -179,8 +179,21 @@ void testApp::setup(){
 void testApp::onNewSensorData(SensorData & s){
   cout <<  s.toString() << endl;
   if (bUseSensors){
-    wind_speed = s.vitesse;// * 1000;
-    wind.y = 90 + s.direction;
+    float speed = 1.0*s.vitesse;
+    float filterCoefSpeed = 0.80;
+    wind_speed = speed * (1- filterCoefSpeed) + filterCoefSpeed*wind_speed;
+    float direction;
+    direction = 270 + s.direction;
+    if (direction > 360) direction -= 360;
+    if (wind.y <90 && direction > 270){
+      direction -=360;
+    }
+    if (wind.y >270 && direction < 90){
+      direction +=360;
+    }
+
+    float filterCoef = 0.90;
+    wind.y = direction * (1- filterCoef) + filterCoef*wind.y;
     if (wind.y > 360) wind.y -= 360;
     temperature = s.temperature;
     pyranometre = s.pyranometre;
@@ -224,7 +237,7 @@ void testApp::updateMovers(){
   if (wind_speed > 2 && (ofRandomuf() < 0.0001 * wind_speed || wind_speed - last_wind_speed > 4)){
 		movers.push_back(ofPtr<Mover>(new Mover()));
 		movers.back().get()->setup();
-    //movers.back().get()->setMass(ofRandom(0.1, 4));
+    //movers.back().get()->setMass(ofRandom(1.1, 4));
     movers.back().get()->setMass(1);
     ofVec2f location;
     location.y = ofGetHeight()/2.;
