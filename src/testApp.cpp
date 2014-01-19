@@ -313,9 +313,21 @@ void testApp::updateSpotFromMoversGaussian(){
     float gaussian_intensity = ofMap(movers[i].get()->getVelocity().length(),0,6,gaussian_intensity_min, gaussian_intensity_max,true);
     gaussian_intensity *= movers[i].get()->getLightning();
     float sd  = ofMap(movers[i].get()->getDiameter(),2.7,40,sd_min,sd_max,false);
-     for (int i = 0; i < nbLedProjector; i++){
+    /*
+    for (int i = 0; i < nbLedProjector; i++){
       float value = gaussian(i, where, sd)*gaussian_intensity/100;
       spots[i]+=value;
+    }
+    */
+    // add perlin noise on the gaussian
+    movers[i].get()->yoff += yoff_inc;
+    float xoff = 0;
+    for (int k = 0; k < nbLedProjector; k++){
+      xoff += xoff_inc;
+      float value = gaussian(i, where, sd)*gaussian_intensity/100;
+      float perlin = ofNoise(xoff, movers[i].get()->yoff)*tourbillons_intensite/100;
+      value += perlin*value;
+      spots[k]+=value;
     }
   }
 }

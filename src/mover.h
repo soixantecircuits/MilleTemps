@@ -11,6 +11,7 @@ class Mover {
       acceleration.set(0, 0);
       mass = 0.01;
       density = 1/16.;
+      yoff = ofRandom(0, 1000);
     }
 
 		void applyForce(const ofVec2f & force){
@@ -25,7 +26,7 @@ class Mover {
 
       lightning *= 0.9;
       if (ofRandomuf() < 0.01){
-        lightning = 1;
+        //lightning = 1;
       }
     }
 
@@ -86,6 +87,7 @@ class Mover {
     static bool shouldRemoveOffScreen(ofPtr<Mover> circle){
       return circle.get()->getLocation().x < -500 || circle.get()->getLocation().x > ofGetWidth()+500 ;
     }
+    float yoff;
 		
   private:
     ofVec2f location;
