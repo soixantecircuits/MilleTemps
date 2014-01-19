@@ -410,7 +410,7 @@ void testApp::turnOff(){
 //--------------------------------------------------------------
 void testApp::update(){
   for (int i = 0; i < simSpeed; i++){
-    updatePerlinNoise();
+    //updatePerlinNoise();
     updateMovers();
     updateSpotFromMoversGaussian();
   }
