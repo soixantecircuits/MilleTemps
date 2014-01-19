@@ -324,7 +324,7 @@ void testApp::updateSpotFromMoversGaussian(){
     float xoff = 0;
     for (int k = 0; k < nbLedProjector; k++){
       xoff += xoff_inc;
-      float value = gaussian(i, where, sd)*gaussian_intensity/100;
+      float value = gaussian(k, where, sd)*gaussian_intensity/100;
       float perlin = ofNoise(xoff, movers[i].get()->yoff)*tourbillons_intensite/100;
       value += perlin*value;
       spots[k]+=value;
