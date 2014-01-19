@@ -128,15 +128,15 @@ void testApp::setup(){
     gui->addWidgetDown(new ofxUILabel("ASPECT", OFX_UI_FONT_MEDIUM));     
     gui->addSlider("ECLAIRAGE PUBLIQUE", 0, 255, 255, sliderWidth, dim);
     gui->addSpacer(length, 2); 
-    gui->addWidgetDown(new ofxUILabel("TOURBILLONS", OFX_UI_FONT_MEDIUM));     
+    gui->addWidgetDown(new ofxUILabel("NUAGES", OFX_UI_FONT_MEDIUM));     
+    gui->addRangeSlider("intensite_", 0, 100, &gaussian_intensity_min, &gaussian_intensity_max , sliderWidth, dim);
+    gui->addRangeSlider("largeur_", 0.1, 20, &sd_min, &sd_max, sliderWidth, dim);
+    gui->addSlider("probabilite_presence", 0, 100, &cloudProbability, sliderWidth, dim);
+    gui->addSpacer(length, 2); 
+    gui->addWidgetDown(new ofxUILabel("VIE INTERIEURE", OFX_UI_FONT_MEDIUM));     
     gui->addSlider("vitesse", 0.001, 0.020, &yoff_inc, sliderWidth, dim);
     gui->addSlider("largeur", 0.3, 0.01, &xoff_inc, sliderWidth, dim);
     gui->addSlider("intensite", 0, 100, &tourbillons_intensite, sliderWidth, dim);
-    gui->addSpacer(length, 2); 
-    gui->addWidgetDown(new ofxUILabel("NUAGES", OFX_UI_FONT_MEDIUM));     
-    gui->addRangeSlider("intensite_generale", 0, 100, &gaussian_intensity_min, &gaussian_intensity_max , sliderWidth, dim);
-    gui->addRangeSlider("largeur_", 0.1, 20, &sd_min, &sd_max, sliderWidth, dim);
-    gui->addSlider("probabilite_presence", 0, 100, &cloudProbability, sliderWidth, dim);
     gui->addSpacer(length, 2); 
     gui->addWidgetDown(new ofxUILabel("VENT", OFX_UI_FONT_MEDIUM));     
     gui->addWidgetDown(new ofxUIRotaryCircleSlider("R2SLIDERCIRCLEROTARY", ofPoint(0,60), ofPoint(0,360), &wind, dim*8));
@@ -243,13 +243,14 @@ void testApp::updateMovers(){
     movers.back().get()->setMass(1);
     ofVec2f location;
     location.y = ofGetHeight()/2.;
+    float width = 2/3.*ofGetHeight();
     if (windCartesian.x > 0){
       //location.x =  0-movers.back().get()->getDiameter();
-      location.x =  -100;
+      location.x =  -width;
     }
     else {
       //location.x =  ofGetWidth();
-      location.x =  ofGetWidth()+100;
+      location.x =  ofGetWidth()+width;
     }
 
     //coefPixelToRealWorld = 1;
@@ -326,7 +327,7 @@ void testApp::updateSpotFromMoversGaussian(){
       xoff += xoff_inc;
       float value = gaussian(k, where, sd)*gaussian_intensity/100;
       float perlin = ofNoise(xoff, movers[i].get()->yoff)*tourbillons_intensite/100;
-      value += perlin*value;
+      value += (perlin-0.5)*value;
       spots[k]+=value;
     }
   }
@@ -410,6 +411,9 @@ void testApp::turnOff(){
 //--------------------------------------------------------------
 void testApp::update(){
   for (int i = 0; i < simSpeed; i++){
+    for (int i = 0; i < nbLedProjector; i++){
+      spots[i].set(0);
+    }
     //updatePerlinNoise();
     updateMovers();
     updateSpotFromMoversGaussian();
@@ -463,6 +467,27 @@ void testApp::draw(){
   #endif
 
   ofSetColor(255);
+  if (bDrawLiners){
+		
+		//lets draw the volume history as a graph
+		ofPushMatrix();
+		ofTranslate(0,0 , 0);
+		ofBeginShape();
+		for (unsigned int i = 0; i < spots.size(); i++){
+      float x = i*ofGetWidth()/spots.size();
+      float x2 = x+3; 
+			ofVertex(x, ofGetHeight());
+
+			ofVertex(x, ofGetHeight() - spots[i].getBrightness() * ofGetHeight());
+			ofVertex(x2, ofGetHeight() - spots[i].getBrightness() * ofGetHeight());
+			
+			ofVertex(x2, ofGetHeight());
+		}
+		ofEndShape(false);		
+			
+		ofPopMatrix();
+  }
+	
   if (bDrawMovers){
     for (unsigned int i = 0; i < movers.size(); i++){
       float gaussian_intensity = ofMap(movers[i].get()->getVelocity().length(),0,6,gaussian_intensity_min, gaussian_intensity_max,true);
@@ -484,6 +509,9 @@ void testApp::keyPressed(int key){
     bLast = !bLast;
   }
   else if (key == 'd'){
+    bDrawLiners = !bDrawLiners;
+  }
+  else if (key == 'j'){
     bDrawMovers = !bDrawMovers;
   }
   switch (key){            

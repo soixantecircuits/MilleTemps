@@ -54,6 +54,7 @@ public:
     bool bLast;
     vector< ofPtr<Mover> > movers;
     bool bDrawMovers;
+    bool bDrawLiners;
     float yoff;
     float yoff_inc;
     float xoff_inc;

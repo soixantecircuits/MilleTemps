@@ -4,47 +4,47 @@
     <Value>0.000000000</Value>
 </Widget>
 <Widget>
-    <Kind>4</Kind>
-    <Name>vitesse</Name>
-    <Value>0.002800000</Value>
-</Widget>
-<Widget>
-    <Kind>4</Kind>
-    <Name>largeur</Name>
-    <Value>0.300000012</Value>
-</Widget>
-<Widget>
-    <Kind>4</Kind>
-    <Name>intensite</Name>
-    <Value>0.000000000</Value>
-</Widget>
-<Widget>
     <Kind>6</Kind>
-    <Name>intensite_generale</Name>
-    <HighValue>100.000000000</HighValue>
-    <LowValue>25.263156891</LowValue>
+    <Name>intensite_</Name>
+    <HighValue>84.500000000</HighValue>
+    <LowValue>20.500000000</LowValue>
 </Widget>
 <Widget>
     <Kind>6</Kind>
     <Name>largeur_</Name>
-    <HighValue>10.364210129</HighValue>
+    <HighValue>9.751500130</HighValue>
     <LowValue>4.079999924</LowValue>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>probabilite_presence</Name>
-    <Value>22.000000000</Value>
+    <Value>12.500000000</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>vitesse</Name>
+    <Value>0.015535000</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>largeur</Name>
+    <Value>0.269550025</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>intensite</Name>
+    <Value>46.500000000</Value>
 </Widget>
 <Widget>
     <Kind>11</Kind>
     <Name>R2SLIDERCIRCLEROTARY</Name>
-    <XValue>30.000003815</XValue>
+    <XValue>10.000000000</XValue>
     <YValue>102.938056946</YValue>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>vitesse (en km/h)</Name>
-    <Value>30.000001907</Value>
+    <Value>10.000000000</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
