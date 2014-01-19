@@ -119,38 +119,39 @@ void testApp::setup(){
   float dim = 16; 
 	float xInit = OFX_UI_GLOBAL_WIDGET_SPACING; 
   float length = 320-xInit; 
+  float sliderWidth = 200;
 	
   gui = new ofxUICanvas(0,0,length+xInit*2.0,height);     
 	gui->addWidgetDown(new ofxUILabel("MILLE TEMPS", OFX_UI_FONT_LARGE)); 
 
     gui->addSpacer(length, 2); 
     gui->addWidgetDown(new ofxUILabel("ASPECT", OFX_UI_FONT_MEDIUM));     
-    gui->addSlider("ECLAIRAGE PUBLIQUE", 0, 255, 255, 95, dim);
+    gui->addSlider("ECLAIRAGE PUBLIQUE", 0, 255, 255, sliderWidth, dim);
     gui->addSpacer(length, 2); 
     gui->addWidgetDown(new ofxUILabel("TOURBILLONS", OFX_UI_FONT_MEDIUM));     
-    gui->addSlider("vitesse", 0.001, 0.020, &yoff_inc, 95, dim);
-    gui->addSlider("largeur", 0.3, 0.01, &xoff_inc, 95, dim);
-    gui->addSlider("intensite", 0, 100, &tourbillons_intensite, 95, dim);
+    gui->addSlider("vitesse", 0.001, 0.020, &yoff_inc, sliderWidth, dim);
+    gui->addSlider("largeur", 0.3, 0.01, &xoff_inc, sliderWidth, dim);
+    gui->addSlider("intensite", 0, 100, &tourbillons_intensite, sliderWidth, dim);
     gui->addSpacer(length, 2); 
     gui->addWidgetDown(new ofxUILabel("NUAGES", OFX_UI_FONT_MEDIUM));     
-    gui->addSlider("largeur_", 0.1, 20, &sd, 95, dim);
-    gui->addSlider("intensite_", 0, 100, &gaussian_intensite, 95, dim);
-    gui->addSlider("intensite_vitesse", 0, 100, &speedIntensity, 95, dim);
+    gui->addRangeSlider("intensite_generale", 0, 100, &gaussian_intensity_min, &gaussian_intensity_max , sliderWidth, dim);
+    gui->addRangeSlider("largeur_", 0.1, 20, &sd_min, &sd_max, sliderWidth, dim);
+    gui->addSlider("probabilite_presence", 0, 100, &cloudProbability, sliderWidth, dim);
     gui->addSpacer(length, 2); 
     gui->addWidgetDown(new ofxUILabel("VENT", OFX_UI_FONT_MEDIUM));     
     gui->addWidgetDown(new ofxUIRotaryCircleSlider("R2SLIDERCIRCLEROTARY", ofPoint(0,60), ofPoint(0,360), &wind, dim*8));
     gui->addSlider("vitesse (en km/h)", 0, 200, &wind_speed, 200, dim);
     gui->addSpacer(length, 2); 
     gui->addWidgetDown(new ofxUILabel("TEMPERATURE", OFX_UI_FONT_MEDIUM));     
-    gui->addSlider("temperature", -5, 40, &temperature, 95, dim);
-    gui->addSlider("saturation", 0, 100, &colorSaturation, 95, dim);
+    gui->addSlider("temperature", -5, 40, &temperature, sliderWidth, dim);
+    gui->addSlider("saturation", 0, 100, &colorSaturation, sliderWidth, dim);
     gui->addSpacer(length, 2); 
     gui->addWidgetDown(new ofxUILabel("ENSOLEILLEMENT", OFX_UI_FONT_MEDIUM));     
-    gui->addSlider("pyranometre", 0, 1, &pyranometre, 95, dim);
+    gui->addSlider("pyranometre", 0, 1, &pyranometre, sliderWidth, dim);
     /*
     gui->setWidgetPosition(OFX_UI_WIDGET_POSITION_RIGHT);
-    gui->addSlider("BGG", 0, 255, backgroundColor.g, 95, dim);
-    gui->addSlider("BGB", 0, 255, backgroundColor.b, 95, dim);
+    gui->addSlider("BGG", 0, 255, backgroundColor.g, sliderWidth, dim);
+    gui->addSlider("BGB", 0, 255, backgroundColor.b, sliderWidth, dim);
     */
   ofAddListener(gui->newGUIEvent,this,&testApp::guiEvent);	
   gui->loadSettings("GUI/guiSettings.xml"); 
@@ -234,7 +235,8 @@ void testApp::updateMovers(){
   ofVec2f windForce(wind_speed * wind_speed * windCartesian/coefPixelToRealWorld);  
   //ofVec2f gravity(0, 0.1);
   //generate balls here
-  if (wind_speed > 2 && (ofRandomuf() < 0.0001 * wind_speed || wind_speed - last_wind_speed > 4)){
+  if (wind_speed > 2 && (ofRandomuf() < 0.00001 * wind_speed * cloudProbability || wind_speed - last_wind_speed > 4)){
+  //if (wind_speed > 2 && (ofRandomuf() < 0.00001 * 60 * cloudProbability || wind_speed - last_wind_speed > 4)){
 		movers.push_back(ofPtr<Mover>(new Mover()));
 		movers.back().get()->setup();
     //movers.back().get()->setMass(ofRandom(1.1, 4));
@@ -308,9 +310,11 @@ void testApp::updateSpotFromMoversGaussian(){
     float diameter = movers[i].get()->getDiameter();
     float radius = diameter/2.;
     float where = (movers[i].get()->getLocation().x-radius)/interval;
-    float speedCoef = ofMap(movers[i].get()->getVelocity().length(),0,1,speedIntensity/100,1.0,true);
+    float gaussian_intensity = ofMap(movers[i].get()->getVelocity().length(),0,6,gaussian_intensity_min, gaussian_intensity_max,true);
+    gaussian_intensity *= movers[i].get()->getLightning();
+    float sd  = ofMap(movers[i].get()->getDiameter(),2.7,40,sd_min,sd_max,false);
      for (int i = 0; i < nbLedProjector; i++){
-      float value = gaussian(i, where, sd)*gaussian_intensite/100*speedCoef;
+      float value = gaussian(i, where, sd)*gaussian_intensity/100;
       spots[i]+=value;
     }
   }
@@ -449,8 +453,9 @@ void testApp::draw(){
   ofSetColor(255);
   if (bDrawMovers){
     for (unsigned int i = 0; i < movers.size(); i++){
-      float speedCoef = ofMap(movers[i].get()->getVelocity().length(),0,1,speedIntensity/100,1.0,true);
-      ofSetColor(175*speedCoef);
+      float gaussian_intensity = ofMap(movers[i].get()->getVelocity().length(),0,6,gaussian_intensity_min, gaussian_intensity_max,true);
+      gaussian_intensity *= movers[i].get()->getLightning();
+      ofSetColor(255*gaussian_intensity/100);
       movers[i].get()->draw();
     }
   }

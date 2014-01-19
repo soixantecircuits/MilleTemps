@@ -62,8 +62,9 @@ public:
     void guiEvent(ofxUIEventArgs &e);
     ofColor bgColor;
     ofPoint wind;
-    float sd;
-    float gaussian_intensite;
+    float sd_min, sd_max;
+    float gaussian_intensity_min;
+    float gaussian_intensity_max;
     float wind_speed;
     float last_wind_speed;
     float temperature;
@@ -72,6 +73,7 @@ public:
     float coefPixelToRealWorld;
     float frictionCoef;
     float speedIntensity;
+    float cloudProbability;
 
     ofxUICanvas *gui2;   	
     float simSpeed;

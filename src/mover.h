@@ -22,10 +22,16 @@ class Mover {
       velocity += acceleration;
       location += velocity;
       acceleration *= 0;
+
+      lightning *= 0.9;
+      if (ofRandomuf() < 0.01){
+        lightning = 1;
+      }
     }
 
 		void draw(){
-      ofEllipse(location, mass / density, mass /density);
+      //ofEllipse(location, 4* mass / density, 4* mass /density);
+      ofEllipse(location, 4* getDiameter(), 4* getDiameter());
     }
 
     void setMass(float m){
@@ -36,6 +42,7 @@ class Mover {
     }
 		void setVelocity(const ofVec2f & v){
       velocity = v;
+      mass = 1/v.length();
     }
 
     void setLocation( float x, float y){
@@ -72,6 +79,10 @@ class Mover {
       }
 
     }
+
+    float getLightning(){
+      return 1 + lightning;
+    }
     static bool shouldRemoveOffScreen(ofPtr<Mover> circle){
       return circle.get()->getLocation().x < -500 || circle.get()->getLocation().x > ofGetWidth()+500 ;
     }
@@ -82,4 +93,5 @@ class Mover {
     ofVec2f acceleration;
     float mass;
     float density;
+    float lightning;
 };
