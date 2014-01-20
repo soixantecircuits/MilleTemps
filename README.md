@@ -5,6 +5,8 @@ $ tar -xzvf driv_linux_uport1p_v1.3.7_build_13071816.tgz
 $ cd driv_linux_uport1p_v1.3.7_build_13071816.tgz
 $ sudo ./mxinstall
 ```
+If mxu11x0 is not loaded when device plugged in, add 'mxu11x0' in /etc/modules
+
 
 To use power button:
 ```
