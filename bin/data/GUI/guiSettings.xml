@@ -7,57 +7,57 @@
     <Kind>6</Kind>
     <Name>intensite_</Name>
     <HighValue>100.000000000</HighValue>
-    <LowValue>14.500000000</LowValue>
+    <LowValue>50.500000000</LowValue>
 </Widget>
 <Widget>
     <Kind>6</Kind>
     <Name>largeur_</Name>
-    <HighValue>7.860999584</HighValue>
-    <LowValue>4.577499866</LowValue>
+    <HighValue>8.955499649</HighValue>
+    <LowValue>4.478001118</LowValue>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>probabilite_presence</Name>
-    <Value>21.500000000</Value>
+    <Value>40.000000000</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>vitesse</Name>
-    <Value>0.010405000</Value>
+    <Value>0.017814999</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>largeur</Name>
-    <Value>0.286950022</Value>
+    <Value>0.250699997</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>intensite</Name>
-    <Value>0.000000000</Value>
+    <Value>32.500000000</Value>
 </Widget>
 <Widget>
     <Kind>11</Kind>
     <Name>R2SLIDERCIRCLEROTARY</Name>
-    <XValue>23.040000916</XValue>
-    <YValue>122.605125427</YValue>
+    <XValue>60.000000000</XValue>
+    <YValue>105.712669373</YValue>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>vitesse (en km/h)</Name>
-    <Value>23.040000916</Value>
+    <Value>12.635999680</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>temperature</Name>
-    <Value>10.300000191</Value>
+    <Value>-5.000000000</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>saturation</Name>
-    <Value>22.105262756</Value>
+    <Value>30.500000000</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>pyranometre</Name>
-    <Value>1.000000000</Value>
+    <Value>0.500000000</Value>
 </Widget>

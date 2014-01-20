@@ -22,7 +22,7 @@ def get_next_sunrise(lat,lng):
   return sunset
 
 now = datetime.datetime.now().replace(tzinfo=tzlocal())
-last_sunset = get_last_sunset('43.265347','3.284921')
+last_sunset = get_next_sunrise('43.265347','3.284921')
 poweroff = last_sunset + datetime.timedelta(1,0)
 poweroff = poweroff.replace(hour = 1, minute=0)
 print "It is: " + str(now)

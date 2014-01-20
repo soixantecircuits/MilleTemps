@@ -439,9 +439,9 @@ void testApp::updateDmx(){
   if ( bUseDmx && dmx.isConnected()){
     for (int i = 0; i < nbLedProjector; i++){ 
       for (int j = 0; j < (int)dmxChannels[i].size(); j++){ 
-        dmx.setLevel(dmxChannels[i][j], ofMap(spots[i].r, 0, 1,62,255,true));
-        dmx.setLevel(dmxChannels[i][j]+1, ofMap(spots[i].g, 0, 1,61,255,true));
-        dmx.setLevel(dmxChannels[i][j]+2, ofMap(spots[i].b, 0, 1,61,255,true));
+        dmx.setLevel(dmxChannels[i][j], ofMap(spots[i].r, 0, 1,63,255,true));
+        dmx.setLevel(dmxChannels[i][j]+1, ofMap(spots[i].g, 0, 1,63,255,true));
+        dmx.setLevel(dmxChannels[i][j]+2, ofMap(spots[i].b, 0, 1,63,255,true));
       }
     }
     /*
