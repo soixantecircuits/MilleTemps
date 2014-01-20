@@ -453,7 +453,7 @@ void testApp::updateDmx(){
   }
 
   if ( !dmx.isConnected() && reconnectDmxDelay < ofGetElapsedTimef()){
-    dmx.connect("ttyUSB0"); // use the name
+    dmx.connect("/dev/serial/by-id/usb-ENTTEC_DMX_USB_PRO_EN086808-if00-port0"); // use the name
     reconnectDmxDelay = ofGetElapsedTimef() + 1000;
   }
 }
@@ -514,6 +514,10 @@ void testApp::keyPressed(int key){
   else if (key == 'j'){
     bDrawMovers = !bDrawMovers;
   }
+  else if (key == 's'){
+    gui->saveSettings("GUI/guiSettings.xml");
+    gui2->saveSettings("GUI/guiSettings2.xml");
+  }
   switch (key){            
     case 'g':
       gui->toggleVisible(); 
@@ -571,4 +575,6 @@ void testApp::exit()
     gui2->saveSettings("GUI/guiSettings2.xml");
     delete gui; 
     delete gui2; 
+    dmx.disconnect();
+    metakPro.disconnect();
 }

@@ -10,6 +10,7 @@ class ofxMetakPro : public ofBaseApp{
     void setup();
     void log();
     void replay(string filename);
+    void disconnect();
     ofEvent<SensorData> NEW_SENSORDATA;
 
   private:

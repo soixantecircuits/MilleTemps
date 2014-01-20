@@ -6,50 +6,50 @@
 <Widget>
     <Kind>6</Kind>
     <Name>intensite_</Name>
-    <HighValue>84.500000000</HighValue>
-    <LowValue>20.500000000</LowValue>
+    <HighValue>100.000000000</HighValue>
+    <LowValue>14.500000000</LowValue>
 </Widget>
 <Widget>
     <Kind>6</Kind>
     <Name>largeur_</Name>
-    <HighValue>9.751500130</HighValue>
-    <LowValue>4.079999924</LowValue>
+    <HighValue>7.860999584</HighValue>
+    <LowValue>4.577499866</LowValue>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>probabilite_presence</Name>
-    <Value>12.500000000</Value>
+    <Value>37.000000000</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>vitesse</Name>
-    <Value>0.015535000</Value>
+    <Value>0.010405000</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>largeur</Name>
-    <Value>0.269550025</Value>
+    <Value>0.286950022</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>intensite</Name>
-    <Value>46.500000000</Value>
+    <Value>25.500000000</Value>
 </Widget>
 <Widget>
     <Kind>11</Kind>
     <Name>R2SLIDERCIRCLEROTARY</Name>
-    <XValue>10.000000000</XValue>
-    <YValue>102.938056946</YValue>
+    <XValue>20.863443375</XValue>
+    <YValue>124.108314514</YValue>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>vitesse (en km/h)</Name>
-    <Value>10.000000000</Value>
+    <Value>21.983964920</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>temperature</Name>
-    <Value>9.699999809</Value>
+    <Value>9.500000000</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
