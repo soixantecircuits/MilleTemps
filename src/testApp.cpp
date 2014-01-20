@@ -9,6 +9,7 @@ float gaussian(float x, float mean, float variance) {
 
 //--------------------------------------------------------------
 void testApp::setup(){
+  ofLogLevel(OF_LOG_NOTICE);
   ofEnableAlphaBlending();
   ofEnableSmoothing();
 
@@ -181,7 +182,7 @@ void testApp::onNewSensorData(SensorData & s){
   cout <<  s.toString() << endl;
   if (bUseSensors){
     float speed = 1.0*s.vitesse;
-    float filterCoefSpeed = 0.80;
+    float filterCoefSpeed = 0.00;
     wind_speed = speed * (1- filterCoefSpeed) + filterCoefSpeed*wind_speed;
     float direction;
     direction = 270 + s.direction;
@@ -453,8 +454,9 @@ void testApp::updateDmx(){
   }
 
   if ( !dmx.isConnected() && reconnectDmxDelay < ofGetElapsedTimef()){
+    cout << "Reconnect dmx" << endl;
     dmx.connect("/dev/serial/by-id/usb-ENTTEC_DMX_USB_PRO_EN086808-if00-port0"); // use the name
-    reconnectDmxDelay = ofGetElapsedTimef() + 1000;
+    reconnectDmxDelay = ofGetElapsedTimef() + 1;
   }
 }
 
@@ -496,7 +498,28 @@ void testApp::draw(){
       movers[i].get()->draw();
     }
   }
-    ofSetColor(255);
+
+  // show conected devices
+  ofSetColor(255);
+  ofVec2f pos = ofVec2f(ofGetWidth() - 200, ofGetHeight() - 32);
+  if ( dmx.isConnected()){
+    ofDrawBitmapString("DMX connected", pos);
+  }
+  else{
+    ofSetColor(242, 82, 82);
+    ofDrawBitmapString("DMX not connected", pos);
+  }
+  ofSetColor(255);
+   pos = ofVec2f(ofGetWidth() - 200, ofGetHeight() - 16);
+  if ( metakPro.isConnected()){
+    ofDrawBitmapString("Sensor connected", pos);
+  }
+  else{
+    ofSetColor(242, 82, 82);
+    ofDrawBitmapString("Sensor not connected.", pos);
+   pos = ofVec2f(ofGetWidth() - 200, ofGetHeight()- 0);
+    ofDrawBitmapString("Wait 1 min.", pos);
+  }
 }
 
 //--------------------------------------------------------------

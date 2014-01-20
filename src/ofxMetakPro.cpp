@@ -45,7 +45,8 @@ void ofxMetakPro::replay(string filename){
 void ofxMetakPro::update(ofEventArgs & args){
   if (connect && !serial.isInitialized() && reconnectDelay < ofGetElapsedTimef()){
     ofLogNotice("Reconnect sensor");
-    reconnectDelay = ofGetElapsedTimef()+1000;
+    cout << ("Reconnect sensor") << endl;;
+    reconnectDelay = ofGetElapsedTimef()+1;
     serial.setup("/dev/serial/by-id/usb-Moxa_Technologies_Co.__Ltd._UPort_1130-if00-port0", 19200);
     serial.startContinuousRead(false);
   } else {
@@ -73,4 +74,8 @@ void ofxMetakPro::sendNextLine(){
 //--------------------------------------------------------------
 void ofxMetakPro::disconnect() {
 	serial.close();
+}
+//--------------------------------------------------------------
+bool ofxMetakPro::isConnected() {
+	return serial.isInitialized();
 }
